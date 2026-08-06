@@ -1,11 +1,16 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 
+import fundoHeader from '../../assets/images/fundo-header.png'
 import { cores } from '../../styles'
 
 export const HeaderBar = styled.header`
-  background-color: ${cores.salmaoClaro};
+  min-height: 384px;
   padding: 40px 0;
+  background-color: ${cores.salmaoClaro};
+  background-image: url(${fundoHeader});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 
   .container {
     display: flex;
@@ -14,19 +19,19 @@ export const HeaderBar = styled.header`
   }
 
   @media (max-width: 768px) {
+    min-height: 320px;
     padding: 32px 0;
   }
 `
 
-export const Logo = styled(Link)`
-  display: block;
-  color: ${cores.salmao};
-  font-size: 36px;
-  font-weight: 900;
-  line-height: 42px;
+export const Logo = styled.div`
+  width: 125px;
+  height: 58px;
 
-  @media (max-width: 768px) {
-    font-size: 32px;
+  img {
+    display: block;
+    width: 125px;
+    height: 58px;
   }
 `
 

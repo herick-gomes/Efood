@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import { cores } from '../../styles'
 
 export const FooterContainer = styled.footer`
-  padding: 40px 0;
+  height: 298px;
+  padding-top: 40px;
   background-color: ${cores.salmaoClaro};
 `
 
@@ -15,36 +16,47 @@ export const FooterContent = styled.div`
 `
 
 export const Logo = styled(Link)`
-  color: ${cores.salmao};
-  font-size: 36px;
-  font-weight: 900;
-  line-height: 42px;
+  display: block;
+  width: 125px;
+  height: 58px;
+
+  img {
+    display: block;
+    width: 125px;
+    height: 58px;
+  }
 `
 
 export const SocialLinks = styled.ul`
   display: flex;
   gap: 8px;
+  width: 88px;
+  height: 24px;
   margin-top: 32px;
 `
 
 export const SocialLink = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  min-height: 32px;
-  padding: 4px;
-  border: 1px solid ${cores.salmao};
-  color: ${cores.salmao};
-  font-size: 12px;
-  font-weight: 700;
+  display: block;
+  width: 24px;
+  height: 24px;
+`
+
+export const SocialIcon = styled.img`
+  display: block;
+  width: 24px;
+  height: 24px;
 `
 
 export const Copyright = styled.p`
-  max-width: 480px;
+  width: 480px;
   margin-top: 80px;
   color: ${cores.salmao};
   font-size: 10px;
-  line-height: 12px;
+  font-weight: 400;
+  line-height: 10px;
   text-align: center;
+
+  @media (max-width: 540px) {
+    width: 90%;
+  }
 `

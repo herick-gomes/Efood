@@ -1,8 +1,14 @@
+import logo from '../../assets/images/logo.svg'
+import facebook from '../../assets/images/facebook.svg'
+import instagram from '../../assets/images/instagram.svg'
+import twitter from '../../assets/images/twitter.svg'
+
 import {
     Copyright,
     FooterContainer,
     FooterContent,
     Logo,
+    SocialIcon,
     SocialLink,
     SocialLinks
 } from './styles'
@@ -10,7 +16,9 @@ import {
 const Footer = () => (
     <FooterContainer>
         <FooterContent className="container">
-            <Logo to="/">efood</Logo>
+            <Logo to="/">
+                <img src={logo} alt="efood" />
+            </Logo>
 
             <SocialLinks>
                 <li>
@@ -20,7 +28,7 @@ const Footer = () => (
                         rel="noreferrer"
                         aria-label="Instagram"
                     >
-                        Instagram
+                        <SocialIcon src={instagram} alt="" />
                     </SocialLink>
                 </li>
 
@@ -31,7 +39,7 @@ const Footer = () => (
                         rel="noreferrer"
                         aria-label="Facebook"
                     >
-                        Facebook
+                        <SocialIcon src={facebook} alt="" />
                     </SocialLink>
                 </li>
 
@@ -42,15 +50,15 @@ const Footer = () => (
                         rel="noreferrer"
                         aria-label="Twitter"
                     >
-                        Twitter
+                        <SocialIcon src={twitter} alt="" />
                     </SocialLink>
                 </li>
             </SocialLinks>
 
             <Copyright>
                 A efood é uma plataforma para divulgação de estabelecimentos. A
-                responsabilidade pela entrega e pela qualidade dos produtos é
-                exclusivamente do estabelecimento contratado.
+                responsabilidade pela entrega e qualidade dos produtos é toda do
+                estabelecimento contratado.
             </Copyright>
         </FooterContent>
     </FooterContainer>
