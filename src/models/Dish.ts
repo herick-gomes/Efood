@@ -1,9 +1,10 @@
 type Dish = {
+    foto: string
+    preco: number
     id: number
-    name: string
-    description: string
-    image: string
-    price: number
+    nome: string
+    descricao: string
+    porcao: string
 }
 
 export default Dish

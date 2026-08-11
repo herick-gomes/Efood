@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
     AddButton,
     Card,
@@ -7,30 +9,57 @@ import {
     Title
 } from './styles'
 
+import ProductModal from '../ProductModal'
+
 type Props = {
     name: string
     description: string
     image: string
     price: number
+    portion?: string
 }
 
-const DishCard = ({ name, description, image, price }: Props) => (
-    <Card>
-        <DishImage src={image} alt={name} />
+const DishCard = ({
+    name,
+    description,
+    image,
+    price,
+    portion = ''
+}: Props) => {
+    const [modalOpen, setModalOpen] = useState(false)
 
-        <Title>{name}</Title>
+    return (
+        <>
+            <Card>
+                <DishImage src={image} alt={name} />
 
-        <Description>{description}</Description>
+                <Title>{name}</Title>
 
-        <Price>
-            {price.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            })}
-        </Price>
+                <Description>{description}</Description>
 
-        <AddButton type="button">Adicionar ao carrinho</AddButton>
-    </Card>
-)
+                <Price>
+                    {price.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    })}
+                </Price>
+
+                <AddButton type="button" onClick={() => setModalOpen(true)}>
+                    Adicionar ao carrinho
+                </AddButton>
+            </Card>
+
+            <ProductModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                name={name}
+                description={description}
+                image={image}
+                price={price}
+                portion={portion}
+            />
+        </>
+    )
+}
 
 export default DishCard

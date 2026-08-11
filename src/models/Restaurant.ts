@@ -1,11 +1,14 @@
+import Dish from './Dish'
+
 type Restaurant = {
     id: number
-    title: string
-    description: string
-    image: string
-    category: string
-    rating: number
-    featured?: boolean
+    titulo: string
+    destacado: boolean
+    tipo: string
+    avaliacao: number
+    descricao: string
+    capa: string
+    cardapio: Dish[]
 }
 
 export default Restaurant
