@@ -69,10 +69,13 @@ export const Logo = styled.div`
   }
 `
 
-export const Cart = styled.a`
+export const Cart = styled.button`
   position: absolute;
   top: 59px;
   right: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
   color: ${cores.salmao};
   font-size: 18px;
   font-weight: 900;

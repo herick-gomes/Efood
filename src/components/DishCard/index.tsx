@@ -12,6 +12,7 @@ import {
 import ProductModal from '../ProductModal'
 
 type Props = {
+    id: number
     name: string
     description: string
     image: string
@@ -20,6 +21,7 @@ type Props = {
 }
 
 const DishCard = ({
+    id,
     name,
     description,
     image,
@@ -52,6 +54,7 @@ const DishCard = ({
             <ProductModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
+                id={id}
                 name={name}
                 description={description}
                 image={image}

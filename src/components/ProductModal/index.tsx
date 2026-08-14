@@ -1,4 +1,7 @@
+import { useDispatch } from 'react-redux'
+
 import closeIcon from '../../assets/images/close.png'
+import { add } from '../../store/reducers/cart'
 
 import {
     CloseButton,
@@ -15,6 +18,7 @@ import {
 type Props = {
     isOpen: boolean
     onClose: () => void
+    id: number
     name: string
     description: string
     image: string
@@ -25,12 +29,15 @@ type Props = {
 const ProductModal = ({
     isOpen,
     onClose,
+    id,
     name,
     description,
     image,
     price,
     portion
 }: Props) => {
+    const dispatch = useDispatch()
+
     if (!isOpen) {
         return null
     }
@@ -39,6 +46,21 @@ const ProductModal = ({
         style: 'currency',
         currency: 'BRL'
     })
+
+    const addToCart = () => {
+        dispatch(
+            add({
+                id,
+                nome: name,
+                descricao: description,
+                foto: image,
+                preco: price,
+                porcao: portion
+            })
+        )
+
+        onClose()
+    }
 
     return (
         <ModalOverlay onClick={onClose}>
@@ -62,7 +84,7 @@ const ProductModal = ({
                         Serve: {portion}
                     </ModalDescription>
 
-                    <PurchaseButton type="button">
+                    <PurchaseButton type="button" onClick={addToCart}>
                         Adicionar ao carrinho - {formattedPrice}
                     </PurchaseButton>
                 </ModalContent>
