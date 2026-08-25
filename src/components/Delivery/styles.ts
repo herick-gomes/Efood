@@ -4,8 +4,8 @@ import { Field, Form as FormikForm } from 'formik'
 import { cores } from '../../styles'
 
 type InputProps = {
-    $small?: boolean
-    $hasError?: boolean
+  $small?: boolean
+  $hasError?: boolean
 }
 
 export const Form = styled(FormikForm)`
@@ -24,6 +24,21 @@ export const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
+
+  input {
+    height: 32px;
+    padding: 0 8px;
+    border: 2px solid ${cores.salmaoClaro};
+    background-color: ${cores.salmaoClaro};
+    color: #4b4b4b;
+    font-size: 14px;
+    font-weight: 700;
+    outline: none;
+  }
+
+  input.input-error {
+    border-color: #8b0000;
+  }
 `
 
 export const Label = styled.label`
@@ -56,9 +71,22 @@ export const Row = styled.div`
   justify-content: space-between;
   gap: 34px;
 
+  ${FieldGroup} {
+    width: 155px;
+
+    input {
+      width: 155px;
+    }
+  }
+
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 0;
+
+    ${FieldGroup},
+    ${FieldGroup} input {
+      width: 100%;
+    }
   }
 `
 

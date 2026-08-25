@@ -1,5 +1,6 @@
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import InputMask from 'react-input-mask'
 
 import {
     Button,
@@ -38,11 +39,27 @@ const Delivery = ({ onBack, onContinue }: Props) => {
     }
 
     const validationSchema = Yup.object({
-        receiver: Yup.string().required('Campo obrigatório'),
-        address: Yup.string().required('Campo obrigatório'),
-        city: Yup.string().required('Campo obrigatório'),
-        zipCode: Yup.string().required('Campo obrigatório'),
-        number: Yup.string().required('Campo obrigatório')
+        receiver: Yup.string()
+            .min(3, 'Digite um nome válido')
+            .required('Campo obrigatório'),
+
+        address: Yup.string()
+            .min(5, 'Digite um endereço válido')
+            .required('Campo obrigatório'),
+
+        city: Yup.string()
+            .min(2, 'Digite uma cidade válida')
+            .required('Campo obrigatório'),
+
+        zipCode: Yup.string()
+            .matches(/^\d{5}-\d{3}$/, 'Digite um CEP válido')
+            .required('Campo obrigatório'),
+
+        number: Yup.string()
+            .matches(/^\d+$/, 'Digite apenas números')
+            .required('Campo obrigatório'),
+
+        complement: Yup.string()
     })
 
     return (
@@ -51,7 +68,7 @@ const Delivery = ({ onBack, onContinue }: Props) => {
             validationSchema={validationSchema}
             onSubmit={(values) => onContinue(values)}
         >
-            {({ errors, touched }) => (
+            {({ errors, touched, values, handleChange, handleBlur }) => (
                 <Form>
                     <Title>Entrega</Title>
 
@@ -60,6 +77,9 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                         <Input
                             id="receiver"
                             name="receiver"
+                            value={values.receiver}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             $hasError={Boolean(errors.receiver && touched.receiver)}
                         />
                         {errors.receiver && touched.receiver && (
@@ -72,6 +92,9 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                         <Input
                             id="address"
                             name="address"
+                            value={values.address}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             $hasError={Boolean(errors.address && touched.address)}
                         />
                         {errors.address && touched.address && (
@@ -84,6 +107,9 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                         <Input
                             id="city"
                             name="city"
+                            value={values.city}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             $hasError={Boolean(errors.city && touched.city)}
                         />
                         {errors.city && touched.city && (
@@ -94,12 +120,19 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     <Row>
                         <FieldGroup>
                             <Label htmlFor="zipCode">CEP</Label>
-                            <Input
+
+                            <InputMask
                                 id="zipCode"
                                 name="zipCode"
-                                $small
-                                $hasError={Boolean(errors.zipCode && touched.zipCode)}
+                                mask="99999-999"
+                                value={values.zipCode}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                                    errors.zipCode && touched.zipCode ? 'input-error' : ''
+                                }
                             />
+
                             {errors.zipCode && touched.zipCode && (
                                 <ErrorMessage>{errors.zipCode}</ErrorMessage>
                             )}
@@ -110,6 +143,10 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                             <Input
                                 id="number"
                                 name="number"
+                                value={values.number}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                inputMode="numeric"
                                 $small
                                 $hasError={Boolean(errors.number && touched.number)}
                             />
@@ -121,11 +158,18 @@ const Delivery = ({ onBack, onContinue }: Props) => {
 
                     <FieldGroup>
                         <Label htmlFor="complement">Complemento (opcional)</Label>
-                        <Input id="complement" name="complement" />
+                        <Input
+                            id="complement"
+                            name="complement"
+                            value={values.complement}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
                     </FieldGroup>
 
                     <ButtonsContainer>
                         <Button type="submit">Continuar com o pagamento</Button>
+
                         <Button type="button" onClick={onBack}>
                             Voltar para o carrinho
                         </Button>

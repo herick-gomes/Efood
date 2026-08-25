@@ -1,5 +1,6 @@
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import InputMask from 'react-input-mask'
 
 import {
     Button,
@@ -38,11 +39,25 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
     }
 
     const validationSchema = Yup.object({
-        cardName: Yup.string().required('Campo obrigatório'),
-        cardNumber: Yup.string().required('Campo obrigatório'),
-        cvv: Yup.string().required('Campo obrigatório'),
-        expiresMonth: Yup.string().required('Campo obrigatório'),
-        expiresYear: Yup.string().required('Campo obrigatório')
+        cardName: Yup.string()
+            .min(3, 'Digite um nome válido')
+            .required('Campo obrigatório'),
+
+        cardNumber: Yup.string()
+            .matches(/^\d{4} \d{4} \d{4} \d{4}$/, 'Digite o número completo do cartão')
+            .required('Campo obrigatório'),
+
+        cvv: Yup.string()
+            .matches(/^\d{3}$/, 'O CVV deve conter 3 números')
+            .required('Campo obrigatório'),
+
+        expiresMonth: Yup.string()
+            .matches(/^(0[1-9]|1[0-2])$/, 'Digite um mês válido')
+            .required('Campo obrigatório'),
+
+        expiresYear: Yup.string()
+            .matches(/^\d{2}$/, 'Digite um ano válido')
+            .required('Campo obrigatório')
     })
 
     const formattedTotal = total.toLocaleString('pt-BR', {
@@ -56,7 +71,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
             validationSchema={validationSchema}
             onSubmit={(values) => onSubmitPayment(values)}
         >
-            {({ errors, touched }) => (
+            {({ errors, touched, values, handleChange, handleBlur }) => (
                 <Form>
                     <Title>Pagamento - Valor a pagar {formattedTotal}</Title>
 
@@ -65,6 +80,9 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                         <Input
                             id="cardName"
                             name="cardName"
+                            value={values.cardName}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             $hasError={Boolean(errors.cardName && touched.cardName)}
                         />
                         {errors.cardName && touched.cardName && (
@@ -75,12 +93,19 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                     <PaymentRow>
                         <FieldGroup>
                             <Label htmlFor="cardNumber">Número do cartão</Label>
-                            <Input
+
+                            <InputMask
                                 id="cardNumber"
                                 name="cardNumber"
-                                $width="228px"
-                                $hasError={Boolean(errors.cardNumber && touched.cardNumber)}
+                                mask="9999 9999 9999 9999"
+                                value={values.cardNumber}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                                    errors.cardNumber && touched.cardNumber ? 'input-error' : ''
+                                }
                             />
+
                             {errors.cardNumber && touched.cardNumber && (
                                 <ErrorMessage>{errors.cardNumber}</ErrorMessage>
                             )}
@@ -88,12 +113,17 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
 
                         <FieldGroup>
                             <Label htmlFor="cvv">CVV</Label>
-                            <Input
+
+                            <InputMask
                                 id="cvv"
                                 name="cvv"
-                                $width="87px"
-                                $hasError={Boolean(errors.cvv && touched.cvv)}
+                                mask="999"
+                                value={values.cvv}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={errors.cvv && touched.cvv ? 'input-error' : ''}
                             />
+
                             {errors.cvv && touched.cvv && (
                                 <ErrorMessage>{errors.cvv}</ErrorMessage>
                             )}
@@ -103,14 +133,21 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                     <ValidityRow>
                         <FieldGroup>
                             <Label htmlFor="expiresMonth">Mês de vencimento</Label>
-                            <Input
+
+                            <InputMask
                                 id="expiresMonth"
                                 name="expiresMonth"
-                                $width="155px"
-                                $hasError={Boolean(
+                                mask="99"
+                                value={values.expiresMonth}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
                                     errors.expiresMonth && touched.expiresMonth
-                                )}
+                                        ? 'input-error'
+                                        : ''
+                                }
                             />
+
                             {errors.expiresMonth && touched.expiresMonth && (
                                 <ErrorMessage>{errors.expiresMonth}</ErrorMessage>
                             )}
@@ -118,12 +155,21 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
 
                         <FieldGroup>
                             <Label htmlFor="expiresYear">Ano de vencimento</Label>
-                            <Input
+
+                            <InputMask
                                 id="expiresYear"
                                 name="expiresYear"
-                                $width="155px"
-                                $hasError={Boolean(errors.expiresYear && touched.expiresYear)}
+                                mask="99"
+                                value={values.expiresYear}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={
+                                    errors.expiresYear && touched.expiresYear
+                                        ? 'input-error'
+                                        : ''
+                                }
                             />
+
                             {errors.expiresYear && touched.expiresYear && (
                                 <ErrorMessage>{errors.expiresYear}</ErrorMessage>
                             )}
