@@ -3,8 +3,10 @@ import { useState } from 'react'
 import {
     AddButton,
     Card,
+    CardContent,
     Description,
     DishImage,
+    ImageContainer,
     Price,
     Title
 } from './styles'
@@ -30,25 +32,29 @@ const DishCard = ({
 }: Props) => {
     const [modalOpen, setModalOpen] = useState(false)
 
+    const formattedPrice = price.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'BRL'
+    })
+
     return (
         <>
             <Card>
-                <DishImage src={image} alt={name} />
+                <ImageContainer>
+                    <DishImage src={image} alt={name} />
+                </ImageContainer>
 
-                <Title>{name}</Title>
+                <CardContent>
+                    <Title>{name}</Title>
 
-                <Description>{description}</Description>
+                    <Description>{description}</Description>
 
-                <Price>
-                    {price.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    })}
-                </Price>
+                    <Price>{formattedPrice}</Price>
 
-                <AddButton type="button" onClick={() => setModalOpen(true)}>
-                    Adicionar ao carrinho
-                </AddButton>
+                    <AddButton type="button" onClick={() => setModalOpen(true)}>
+                        View details
+                    </AddButton>
+                </CardContent>
             </Card>
 
             <ProductModal

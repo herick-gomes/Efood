@@ -11,6 +11,10 @@ import {
     Input,
     Label,
     PaymentRow,
+    PriceBox,
+    PriceLabel,
+    PriceValue,
+    Subtitle,
     Title,
     ValidityRow
 } from './styles'
@@ -40,27 +44,30 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
 
     const validationSchema = Yup.object({
         cardName: Yup.string()
-            .min(3, 'Digite um nome válido')
-            .required('Campo obrigatório'),
+            .min(3, 'Enter a valid name')
+            .required('This field is required'),
 
         cardNumber: Yup.string()
-            .matches(/^\d{4} \d{4} \d{4} \d{4}$/, 'Digite o número completo do cartão')
-            .required('Campo obrigatório'),
+            .matches(
+                /^\d{4} \d{4} \d{4} \d{4}$/,
+                'Enter the complete card number'
+            )
+            .required('This field is required'),
 
         cvv: Yup.string()
-            .matches(/^\d{3}$/, 'O CVV deve conter 3 números')
-            .required('Campo obrigatório'),
+            .matches(/^\d{3}$/, 'CVV must contain 3 digits')
+            .required('This field is required'),
 
         expiresMonth: Yup.string()
-            .matches(/^(0[1-9]|1[0-2])$/, 'Digite um mês válido')
-            .required('Campo obrigatório'),
+            .matches(/^(0[1-9]|1[0-2])$/, 'Enter a valid month')
+            .required('This field is required'),
 
         expiresYear: Yup.string()
-            .matches(/^\d{2}$/, 'Digite um ano válido')
-            .required('Campo obrigatório')
+            .matches(/^\d{2}$/, 'Enter a valid year')
+            .required('This field is required')
     })
 
-    const formattedTotal = total.toLocaleString('pt-BR', {
+    const formattedTotal = total.toLocaleString('en-US', {
         style: 'currency',
         currency: 'BRL'
     })
@@ -73,18 +80,31 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
         >
             {({ errors, touched, values, handleChange, handleBlur }) => (
                 <Form>
-                    <Title>Pagamento - Valor a pagar {formattedTotal}</Title>
+                    <Title>Payment details</Title>
+
+                    <Subtitle>
+                        Enter your card information to securely complete your order.
+                    </Subtitle>
+
+                    <PriceBox>
+                        <PriceLabel>Order total</PriceLabel>
+                        <PriceValue>{formattedTotal}</PriceValue>
+                    </PriceBox>
 
                     <FieldGroup>
-                        <Label htmlFor="cardName">Nome no cartão</Label>
+                        <Label htmlFor="cardName">Name on card</Label>
+
                         <Input
                             id="cardName"
                             name="cardName"
+                            placeholder="Full name"
+                            autoComplete="cc-name"
                             value={values.cardName}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             $hasError={Boolean(errors.cardName && touched.cardName)}
                         />
+
                         {errors.cardName && touched.cardName && (
                             <ErrorMessage>{errors.cardName}</ErrorMessage>
                         )}
@@ -92,12 +112,14 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
 
                     <PaymentRow>
                         <FieldGroup>
-                            <Label htmlFor="cardNumber">Número do cartão</Label>
+                            <Label htmlFor="cardNumber">Card number</Label>
 
                             <InputMask
                                 id="cardNumber"
                                 name="cardNumber"
                                 mask="9999 9999 9999 9999"
+                                placeholder="0000 0000 0000 0000"
+                                autoComplete="cc-number"
                                 value={values.cardNumber}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -118,6 +140,8 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                                 id="cvv"
                                 name="cvv"
                                 mask="999"
+                                placeholder="123"
+                                autoComplete="cc-csc"
                                 value={values.cvv}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -132,12 +156,14 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
 
                     <ValidityRow>
                         <FieldGroup>
-                            <Label htmlFor="expiresMonth">Mês de vencimento</Label>
+                            <Label htmlFor="expiresMonth">Expiry month</Label>
 
                             <InputMask
                                 id="expiresMonth"
                                 name="expiresMonth"
                                 mask="99"
+                                placeholder="MM"
+                                autoComplete="cc-exp-month"
                                 value={values.expiresMonth}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -154,12 +180,14 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                         </FieldGroup>
 
                         <FieldGroup>
-                            <Label htmlFor="expiresYear">Ano de vencimento</Label>
+                            <Label htmlFor="expiresYear">Expiry year</Label>
 
                             <InputMask
                                 id="expiresYear"
                                 name="expiresYear"
                                 mask="99"
+                                placeholder="YY"
+                                autoComplete="cc-exp-year"
                                 value={values.expiresYear}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -177,10 +205,10 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                     </ValidityRow>
 
                     <ButtonsContainer>
-                        <Button type="submit">Finalizar pagamento</Button>
+                        <Button type="submit">Place order</Button>
 
-                        <Button type="button" onClick={onBack}>
-                            Voltar para a edição de endereço
+                        <Button type="button" $secondary onClick={onBack}>
+                            Back to delivery
                         </Button>
                     </ButtonsContainer>
                 </Form>

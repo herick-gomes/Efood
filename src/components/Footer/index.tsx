@@ -1,64 +1,37 @@
 import logo from '../../assets/images/logo.svg'
-import facebook from '../../assets/images/facebook.svg'
-import instagram from '../../assets/images/instagram.svg'
-import twitter from '../../assets/images/twitter.svg'
 
 import {
     Copyright,
     FooterContainer,
     FooterContent,
+    FooterDescription,
     Logo,
-    SocialIcon,
-    SocialLink,
-    SocialLinks
+    Stack,
+    StackItem
 } from './styles'
 
 const Footer = () => (
     <FooterContainer>
         <FooterContent className="container">
-            <Logo to="/">
+            <Logo to="/" aria-label="Go to efood home">
                 <img src={logo} alt="efood" />
             </Logo>
 
-            <SocialLinks>
-                <li>
-                    <SocialLink
-                        href="https://www.instagram.com/"
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label="Instagram"
-                    >
-                        <SocialIcon src={instagram} alt="" />
-                    </SocialLink>
-                </li>
+            <FooterDescription>
+                A modern food delivery experience built with React and TypeScript,
+                featuring restaurant discovery, persistent cart management and a
+                complete checkout flow.
+            </FooterDescription>
 
-                <li>
-                    <SocialLink
-                        href="https://www.facebook.com/"
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label="Facebook"
-                    >
-                        <SocialIcon src={facebook} alt="" />
-                    </SocialLink>
-                </li>
-
-                <li>
-                    <SocialLink
-                        href="https://twitter.com/"
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label="Twitter"
-                    >
-                        <SocialIcon src={twitter} alt="" />
-                    </SocialLink>
-                </li>
-            </SocialLinks>
+            <Stack aria-label="Technologies used">
+                <StackItem>React</StackItem>
+                <StackItem>TypeScript</StackItem>
+                <StackItem>Redux Toolkit</StackItem>
+                <StackItem>Styled Components</StackItem>
+            </Stack>
 
             <Copyright>
-                A efood é uma plataforma para divulgação de estabelecimentos. A
-                responsabilidade pela entrega e qualidade dos produtos é toda do
-                estabelecimento contratado.
+                © {new Date().getFullYear()} efood. Portfolio project by Herick Gomes.
             </Copyright>
         </FooterContent>
     </FooterContainer>

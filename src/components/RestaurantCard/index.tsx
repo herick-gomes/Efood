@@ -34,7 +34,7 @@ const RestaurantCard = ({
         <RestaurantImage src={image} alt={title} />
 
         <Infos>
-            {featured && <Tag>Destaque da semana</Tag>}
+            {featured && <Tag>Featured this week</Tag>}
             <Tag>{category}</Tag>
         </Infos>
 
@@ -44,13 +44,13 @@ const RestaurantCard = ({
 
                 <Rating>
                     <span>{rating}</span>
-                    <span aria-label="estrela">★</span>
+                    <span aria-label="rating">★</span>
                 </Rating>
             </CardHeader>
 
             <Description>{description}</Description>
 
-            <ViewButton to={`/perfil/${id}`}>Saiba mais</ViewButton>
+            <ViewButton to={`/perfil/${id}`}>View restaurant</ViewButton>
         </CardContent>
     </Card>
 )

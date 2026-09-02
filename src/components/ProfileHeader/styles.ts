@@ -5,87 +5,131 @@ import fundoHeader from '../../assets/images/fundo-header.png'
 import { cores } from '../../styles'
 
 export const HeaderBar = styled.header`
-  height: 186px;
+  min-height: 140px;
   background-color: ${cores.salmaoClaro};
-  background-image: url(${fundoHeader});
+
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255, 240, 230, 0.86),
+      rgba(255, 248, 242, 0.96)
+    ),
+    url(${fundoHeader});
+
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 
+  border-bottom: 1px solid rgba(230, 103, 103, 0.12);
+
   @media (max-width: 768px) {
-    height: auto;
-    min-height: 220px;
     padding: 24px 0;
   }
 `
 
 export const HeaderContent = styled.div`
   position: relative;
-  height: 100%;
+  min-height: 140px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   @media (max-width: 768px) {
-    display: flex;
+    min-height: auto;
+
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 16px;
+
+    gap: 20px;
   }
 `
 
 export const Navigation = styled(Link)`
-  position: absolute;
-  top: 59px;
-  left: 0;
-  color: ${cores.salmao};
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 21px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+
+  color: ${cores.salmaoEscuro};
+
+  font-size: 15px;
+  font-weight: 700;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    color: ${cores.salmao};
+    transform: translateX(-3px);
+  }
 
   @media (max-width: 768px) {
-    position: static;
     order: 2;
   }
 `
 
 export const Logo = styled.div`
   position: absolute;
-  top: 40px;
   left: 50%;
+
   width: 125px;
-  height: 58px;
+
   transform: translateX(-50%);
+
+  a {
+    display: block;
+
+    transition: transform 0.2s ease;
+  }
+
+  a:hover {
+    transform: scale(1.04);
+  }
 
   img {
     display: block;
-    width: 125px;
-    height: 58px;
+    width: 100%;
   }
 
   @media (max-width: 768px) {
     position: static;
+
     order: 1;
+
     transform: none;
   }
 `
 
 export const Cart = styled.button`
-  position: absolute;
-  top: 59px;
-  right: 0;
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  color: ${cores.salmao};
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 21px;
-  text-align: right;
-  cursor: pointer;
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border: 1px solid rgba(230, 103, 103, 0.28);
+  border-radius: 10px;
+
+  background-color: rgba(255, 255, 255, 0.7);
+
+  color: ${cores.salmaoEscuro};
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background-color: ${cores.salmao};
+    border-color: ${cores.salmao};
+    color: ${cores.branca};
+
+    transform: translateY(-1px);
+  }
 
   @media (max-width: 768px) {
-    position: static;
     order: 3;
-    text-align: center;
   }
 `

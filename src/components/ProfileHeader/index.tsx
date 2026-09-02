@@ -19,11 +19,16 @@ const ProfileHeader = () => {
 
     const items = useSelector((state: RootState) => state.cart.items)
 
+    const cartLabel =
+        items.length === 1
+            ? '1 item in your cart'
+            : `${items.length} items in your cart`
+
     return (
         <>
             <HeaderBar>
                 <HeaderContent className="container">
-                    <Navigation to="/">Restaurantes</Navigation>
+                    <Navigation to="/">← Restaurants</Navigation>
 
                     <Logo>
                         <Link to="/">
@@ -32,7 +37,7 @@ const ProfileHeader = () => {
                     </Logo>
 
                     <Cart type="button" onClick={() => setCartOpen(true)}>
-                        {items.length} produto(s) no carrinho
+                        {cartLabel}
                     </Cart>
                 </HeaderContent>
             </HeaderBar>

@@ -1,17 +1,18 @@
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import closeIcon from '../../assets/images/close.png'
 import { add } from '../../store/reducers/cart'
 
 import {
     CloseButton,
-    CloseIcon,
     ModalContainer,
     ModalContent,
     ModalDescription,
     ModalImage,
     ModalOverlay,
     ModalTitle,
+    Portion,
+    Price,
     PurchaseButton
 } from './styles'
 
@@ -38,11 +39,33 @@ const ProductModal = ({
 }: Props) => {
     const dispatch = useDispatch()
 
+    useEffect(() => {
+        if (!isOpen) {
+            return
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                onClose()
+            }
+        }
+
+        const previousOverflow = document.body.style.overflow
+
+        document.body.style.overflow = 'hidden'
+        window.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.body.style.overflow = previousOverflow
+            window.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [isOpen, onClose])
+
     if (!isOpen) {
         return null
     }
 
-    const formattedPrice = price.toLocaleString('pt-BR', {
+    const formattedPrice = price.toLocaleString('en-US', {
         style: 'currency',
         currency: 'BRL'
     })
@@ -65,27 +88,32 @@ const ProductModal = ({
     return (
         <ModalOverlay onClick={onClose}>
             <ModalContainer
-                className="container"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={`dish-${id}-title`}
                 onClick={(event) => event.stopPropagation()}
             >
-                <CloseButton type="button" onClick={onClose}>
-                    <CloseIcon src={closeIcon} alt="Fechar" />
+                <CloseButton
+                    type="button"
+                    onClick={onClose}
+                    aria-label="Close product details"
+                >
+                    ×
                 </CloseButton>
 
                 <ModalImage src={image} alt={name} />
 
                 <ModalContent>
-                    <ModalTitle>{name}</ModalTitle>
+                    <ModalTitle id={`dish-${id}-title`}>{name}</ModalTitle>
 
-                    <ModalDescription>
-                        {description}
-                        <br />
-                        <br />
-                        Serve: {portion}
-                    </ModalDescription>
+                    <ModalDescription>{description}</ModalDescription>
+
+                    {portion && <Portion>Serves: {portion}</Portion>}
+
+                    <Price>{formattedPrice}</Price>
 
                     <PurchaseButton type="button" onClick={addToCart}>
-                        Adicionar ao carrinho - {formattedPrice}
+                        Add to cart
                     </PurchaseButton>
                 </ModalContent>
             </ModalContainer>

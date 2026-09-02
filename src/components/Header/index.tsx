@@ -2,7 +2,14 @@ import { Link } from 'react-router-dom'
 
 import logo from '../../assets/images/logo.svg'
 
-import { HeaderBar, Logo, Title } from './styles'
+import {
+    HeaderBar,
+    Logo,
+    HeroContent,
+    Eyebrow,
+    Title,
+    Subtitle
+} from './styles'
 
 const Header = () => (
     <HeaderBar>
@@ -13,11 +20,20 @@ const Header = () => (
                 </Link>
             </Logo>
 
-            <Title>
-                Viva experiências gastronômicas
-                <br />
-                no conforto da sua casa
-            </Title>
+            <HeroContent>
+                <Eyebrow>DELIVERY • RESTAURANTS • EXPERIENCES</Eyebrow>
+
+                <Title>
+                    Your next favorite meal
+                    <br />
+                    is just a few clicks away
+                </Title>
+
+                <Subtitle>
+                    Discover great restaurants, explore new flavors and order from the
+                    comfort of your home.
+                </Subtitle>
+            </HeroContent>
         </div>
     </HeaderBar>
 )

@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom'
 import { cores } from '../../styles'
 
 export const FooterContainer = styled.footer`
-  height: 298px;
-  padding-top: 40px;
+  padding: 64px 0 40px;
+
+  border-top: 1px solid ${cores.borda};
+
   background-color: ${cores.salmaoClaro};
 `
 
@@ -13,50 +15,67 @@ export const FooterContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  text-align: center;
 `
 
 export const Logo = styled(Link)`
   display: block;
+
   width: 125px;
-  height: 58px;
+
+  transition: transform 0.2s ease;
 
   img {
     display: block;
-    width: 125px;
-    height: 58px;
+    width: 100%;
+  }
+
+  &:hover {
+    transform: scale(1.04);
   }
 `
 
-export const SocialLinks = styled.ul`
+export const FooterDescription = styled.p`
+  max-width: 560px;
+
+  margin-top: 28px;
+
+  color: ${cores.textoSecundario};
+
+  font-size: 14px;
+  line-height: 1.7;
+`
+
+export const Stack = styled.ul`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
   gap: 8px;
-  width: 88px;
-  height: 24px;
-  margin-top: 32px;
+
+  margin-top: 24px;
 `
 
-export const SocialLink = styled.a`
-  display: block;
-  width: 24px;
-  height: 24px;
-`
+export const StackItem = styled.li`
+  padding: 7px 12px;
 
-export const SocialIcon = styled.img`
-  display: block;
-  width: 24px;
-  height: 24px;
+  border: 1px solid rgba(230, 103, 103, 0.18);
+  border-radius: 999px;
+
+  background-color: rgba(255, 255, 255, 0.6);
+  color: ${cores.salmaoEscuro};
+
+  font-size: 11px;
+  font-weight: 700;
 `
 
 export const Copyright = styled.p`
-  width: 480px;
-  margin-top: 80px;
-  color: ${cores.salmao};
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 10px;
-  text-align: center;
+  margin-top: 34px;
 
-  @media (max-width: 540px) {
-    width: 90%;
-  }
+  color: ${cores.textoSecundario};
+
+  font-size: 11px;
+  line-height: 1.5;
 `

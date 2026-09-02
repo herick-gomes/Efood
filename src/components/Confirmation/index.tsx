@@ -1,4 +1,12 @@
-import { Button, Description, Title } from './styles'
+import {
+    Button,
+    ConfirmationIcon,
+    Description,
+    OrderCode,
+    OrderLabel,
+    SuccessCard,
+    Title
+} from './styles'
 
 type Props = {
     orderId: string
@@ -6,30 +14,30 @@ type Props = {
 }
 
 const Confirmation = ({ orderId, onFinish }: Props) => (
-    <>
-        <Title>Pedido realizado - {orderId}</Title>
+    <SuccessCard>
+        <ConfirmationIcon>✓</ConfirmationIcon>
+
+        <Title>Order confirmed!</Title>
 
         <Description>
-            Estamos felizes em informar que seu pedido já está em processo de
-            preparação e, em breve, será entregue no endereço fornecido.
-            <br />
-            <br />
-            Gostaríamos de ressaltar que nossos entregadores não estão autorizados a
-            realizar cobranças extras.
-            <br />
-            <br />
-            Lembre-se da importância de higienizar as mãos após o recebimento do
-            pedido, garantindo assim sua segurança e bem-estar durante a refeição.
-            <br />
-            <br />
-            Esperamos que desfrute de uma deliciosa e agradável experiência
-            gastronômica. Bom apetite!
+            Your order has been successfully placed and is now being prepared.
+            We&apos;ll make sure everything is ready for delivery as soon as possible.
+        </Description>
+
+        <OrderCode>
+            <OrderLabel>Order number</OrderLabel>
+            <strong>{orderId}</strong>
+        </OrderCode>
+
+        <Description>
+            Please note that our delivery partners are not authorized to request any
+            additional payments when your order arrives.
         </Description>
 
         <Button type="button" onClick={onFinish}>
-            Concluir
+            Back to restaurant
         </Button>
-    </>
+    </SuccessCard>
 )
 
 export default Confirmation

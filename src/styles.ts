@@ -3,8 +3,12 @@ import { createGlobalStyle } from 'styled-components'
 export const cores = {
   branca: '#ffffff',
   salmao: '#e66767',
-  salmaoClaro: '#ffebd9',
-  bege: '#fff8f2'
+  salmaoEscuro: '#c84f4f',
+  salmaoClaro: '#fff0e6',
+  bege: '#fffaf6',
+  texto: '#2d2d2d',
+  textoSecundario: '#6f6f6f',
+  borda: '#f0ddd5'
 }
 
 export const GlobalCss = createGlobalStyle`
@@ -22,7 +26,8 @@ export const GlobalCss = createGlobalStyle`
 
   body {
     background-color: ${cores.bege};
-    color: ${cores.salmao};
+    color: ${cores.texto};
+    -webkit-font-smoothing: antialiased;
   }
 
   img {
@@ -45,14 +50,14 @@ export const GlobalCss = createGlobalStyle`
   }
 
   .container {
-    max-width: 1024px;
-    width: 100%;
+    max-width: 1120px;
+    width: calc(100% - 48px);
     margin: 0 auto;
   }
 
-  @media (max-width: 1080px) {
+  @media (max-width: 768px) {
     .container {
-      width: 90%;
+      width: calc(100% - 32px);
     }
   }
 `

@@ -1,7 +1,13 @@
 import Restaurant from '../../models/Restaurant'
 import RestaurantCard from '../RestaurantCard'
 
-import { List, Section } from './styles'
+import {
+    List,
+    Section,
+    SectionHeader,
+    SectionTitle,
+    SectionSubtitle
+} from './styles'
 
 type Props = {
     restaurants: Restaurant[]
@@ -10,6 +16,14 @@ type Props = {
 const RestaurantList = ({ restaurants }: Props) => (
     <Section>
         <div className="container">
+            <SectionHeader>
+                <SectionTitle>Discover restaurants</SectionTitle>
+
+                <SectionSubtitle>
+                    Explore different cuisines and find your next favorite meal.
+                </SectionSubtitle>
+            </SectionHeader>
+
             <List>
                 {restaurants.map((restaurant) => (
                     <li key={restaurant.id}>

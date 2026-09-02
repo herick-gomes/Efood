@@ -1,43 +1,91 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
 
-import DishList from '../../components/DishList'
 import Footer from '../../components/Footer'
-import ProfileHeader from '../../components/ProfileHeader'
-import RestaurantHero from '../../components/RestaurantHero'
+import Header from '../../components/Header'
+import RestaurantList from '../../components/RestaurantList'
+import StatusState from '../../components/StatusState'
 
 import Restaurant from '../../models/Restaurant'
 
-const Profile = () => {
-    const { id } = useParams()
+import { translateRestaurants } from '../../utils/translateRestaurant'
 
-    const [restaurant, setRestaurant] = useState<Restaurant>()
+const Home = () => {
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState('')
+
+    const loadRestaurants = useCallback(async (signal?: AbortSignal) => {
+        try {
+            setIsLoading(true)
+            setError('')
+
+            const response = await fetch(
+                'https://api-ebac.vercel.app/api/efood/restaurantes',
+                { signal }
+            )
+
+            if (!response.ok) {
+                throw new Error('Unable to load restaurants')
+            }
+
+            const data: Restaurant[] = await response.json()
+
+            setRestaurants(translateRestaurants(data))
+        } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') {
+                return
+            }
+
+            console.error('Error loading restaurants:', error)
+
+            setError(
+                'We could not load the restaurants right now. Please try again.'
+            )
+        } finally {
+            if (!signal?.aborted) {
+                setIsLoading(false)
+            }
+        }
+    }, [])
 
     useEffect(() => {
-        fetch(`https://api-ebac.vercel.app/api/efood/restaurantes/${id}`)
-            .then((response) => response.json())
-            .then((data) => setRestaurant(data))
-    }, [id])
+        const controller = new AbortController()
 
-    if (!restaurant) {
-        return <h3>Carregando...</h3>
-    }
+        loadRestaurants(controller.signal)
+
+        return () => {
+            controller.abort()
+        }
+    }, [loadRestaurants])
 
     return (
         <>
-            <ProfileHeader />
+            <Header />
 
-            <RestaurantHero
-                category={restaurant.tipo}
-                name={restaurant.titulo}
-                image={restaurant.capa}
-            />
+            {isLoading && (
+                <StatusState
+                    loading
+                    title="Loading restaurants"
+                    description="We are preparing the best restaurant options for you."
+                />
+            )}
 
-            <DishList dishes={restaurant.cardapio} />
+            {!isLoading && error && (
+                <StatusState
+                    title="Something went wrong"
+                    description={error}
+                    actionLabel="Try again"
+                    onAction={() => loadRestaurants()}
+                />
+            )}
+
+            {!isLoading && !error && (
+                <RestaurantList restaurants={restaurants} />
+            )}
 
             <Footer />
         </>
     )
 }
 
-export default Profile
+export default Home

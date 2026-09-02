@@ -11,6 +11,7 @@ import {
     Input,
     Label,
     Row,
+    Subtitle,
     Title
 } from './styles'
 
@@ -40,24 +41,24 @@ const Delivery = ({ onBack, onContinue }: Props) => {
 
     const validationSchema = Yup.object({
         receiver: Yup.string()
-            .min(3, 'Digite um nome válido')
-            .required('Campo obrigatório'),
+            .min(3, 'Enter a valid name')
+            .required('This field is required'),
 
         address: Yup.string()
-            .min(5, 'Digite um endereço válido')
-            .required('Campo obrigatório'),
+            .min(5, 'Enter a valid address')
+            .required('This field is required'),
 
         city: Yup.string()
-            .min(2, 'Digite uma cidade válida')
-            .required('Campo obrigatório'),
+            .min(2, 'Enter a valid city')
+            .required('This field is required'),
 
         zipCode: Yup.string()
-            .matches(/^\d{5}-\d{3}$/, 'Digite um CEP válido')
-            .required('Campo obrigatório'),
+            .matches(/^\d{5}-\d{3}$/, 'Enter a valid postal code')
+            .required('This field is required'),
 
         number: Yup.string()
-            .matches(/^\d+$/, 'Digite apenas números')
-            .required('Campo obrigatório'),
+            .matches(/^\d+$/, 'Use numbers only')
+            .required('This field is required'),
 
         complement: Yup.string()
     })
@@ -70,48 +71,64 @@ const Delivery = ({ onBack, onContinue }: Props) => {
         >
             {({ errors, touched, values, handleChange, handleBlur }) => (
                 <Form>
-                    <Title>Entrega</Title>
+                    <Title>Delivery details</Title>
+
+                    <Subtitle>
+                        Tell us where you would like your order to be delivered.
+                    </Subtitle>
 
                     <FieldGroup>
-                        <Label htmlFor="receiver">Quem irá receber</Label>
+                        <Label htmlFor="receiver">Recipient name</Label>
+
                         <Input
                             id="receiver"
                             name="receiver"
+                            placeholder="Full name"
+                            autoComplete="name"
                             value={values.receiver}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             $hasError={Boolean(errors.receiver && touched.receiver)}
                         />
+
                         {errors.receiver && touched.receiver && (
                             <ErrorMessage>{errors.receiver}</ErrorMessage>
                         )}
                     </FieldGroup>
 
                     <FieldGroup>
-                        <Label htmlFor="address">Endereço</Label>
+                        <Label htmlFor="address">Address</Label>
+
                         <Input
                             id="address"
                             name="address"
+                            placeholder="Street and address"
+                            autoComplete="street-address"
                             value={values.address}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             $hasError={Boolean(errors.address && touched.address)}
                         />
+
                         {errors.address && touched.address && (
                             <ErrorMessage>{errors.address}</ErrorMessage>
                         )}
                     </FieldGroup>
 
                     <FieldGroup>
-                        <Label htmlFor="city">Cidade</Label>
+                        <Label htmlFor="city">City</Label>
+
                         <Input
                             id="city"
                             name="city"
+                            placeholder="City"
+                            autoComplete="address-level2"
                             value={values.city}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             $hasError={Boolean(errors.city && touched.city)}
                         />
+
                         {errors.city && touched.city && (
                             <ErrorMessage>{errors.city}</ErrorMessage>
                         )}
@@ -119,12 +136,14 @@ const Delivery = ({ onBack, onContinue }: Props) => {
 
                     <Row>
                         <FieldGroup>
-                            <Label htmlFor="zipCode">CEP</Label>
+                            <Label htmlFor="zipCode">Postal code</Label>
 
                             <InputMask
                                 id="zipCode"
                                 name="zipCode"
                                 mask="99999-999"
+                                placeholder="00000-000"
+                                autoComplete="postal-code"
                                 value={values.zipCode}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -139,17 +158,19 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                         </FieldGroup>
 
                         <FieldGroup>
-                            <Label htmlFor="number">Número</Label>
+                            <Label htmlFor="number">Number</Label>
+
                             <Input
                                 id="number"
                                 name="number"
+                                placeholder="123"
+                                inputMode="numeric"
                                 value={values.number}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                inputMode="numeric"
-                                $small
                                 $hasError={Boolean(errors.number && touched.number)}
                             />
+
                             {errors.number && touched.number && (
                                 <ErrorMessage>{errors.number}</ErrorMessage>
                             )}
@@ -157,10 +178,13 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </Row>
 
                     <FieldGroup>
-                        <Label htmlFor="complement">Complemento (opcional)</Label>
+                        <Label htmlFor="complement">Additional details</Label>
+
                         <Input
                             id="complement"
                             name="complement"
+                            placeholder="Apartment, suite, landmark... (optional)"
+                            autoComplete="address-line2"
                             value={values.complement}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -168,10 +192,10 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </FieldGroup>
 
                     <ButtonsContainer>
-                        <Button type="submit">Continuar com o pagamento</Button>
+                        <Button type="submit">Continue to payment</Button>
 
-                        <Button type="button" onClick={onBack}>
-                            Voltar para o carrinho
+                        <Button type="button" $secondary onClick={onBack}>
+                            Back to cart
                         </Button>
                     </ButtonsContainer>
                 </Form>

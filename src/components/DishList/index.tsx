@@ -1,7 +1,13 @@
 import Dish from '../../models/Dish'
 import DishCard from '../DishCard'
 
-import { List, Section } from './styles'
+import {
+    List,
+    Section,
+    SectionHeader,
+    SectionSubtitle,
+    SectionTitle
+} from './styles'
 
 type Props = {
     dishes: Dish[]
@@ -10,6 +16,14 @@ type Props = {
 const DishList = ({ dishes }: Props) => (
     <Section>
         <div className="container">
+            <SectionHeader>
+                <SectionTitle>Explore the menu</SectionTitle>
+
+                <SectionSubtitle>
+                    Discover our selection of dishes and choose your next favorite.
+                </SectionSubtitle>
+            </SectionHeader>
+
             <List>
                 {dishes.map((dish) => (
                     <li key={dish.id}>

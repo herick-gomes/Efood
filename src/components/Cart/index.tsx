@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import lixeira from '../../assets/images/lixeira.png'
@@ -12,6 +12,7 @@ import Payment, { PaymentData } from '../Payment'
 import {
     CartButton,
     CartContainer,
+    CartHeader,
     CartItem,
     CartItemContent,
     CartItemImage,
@@ -19,10 +20,18 @@ import {
     CartItemPrice,
     CartList,
     CartOverlay,
+    CartSubtitle,
+    CartTitle,
+    CloseButton,
+    EmptyDescription,
+    EmptyIcon,
     EmptyMessage,
+    EmptyState,
+    ProcessingMessage,
     RemoveButton,
     RemoveIcon,
     Total,
+    TotalLabel,
     TotalValue
 } from './styles'
 
@@ -39,6 +48,7 @@ type CheckoutResponse = {
 
 const Cart = ({ isOpen, onClose }: Props) => {
     const dispatch = useDispatch()
+
     const items = useSelector((state: RootState) => state.cart.items)
 
     const [step, setStep] = useState<CheckoutStep>('cart')
@@ -50,7 +60,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
         return accumulator + item.preco
     }, 0)
 
-    const formattedTotal = total.toLocaleString('pt-BR', {
+    const formattedTotal = total.toLocaleString('en-US', {
         style: 'currency',
         currency: 'BRL'
     })
@@ -59,6 +69,28 @@ const Cart = ({ isOpen, onClose }: Props) => {
         setStep('cart')
         onClose()
     }
+
+    useEffect(() => {
+        if (!isOpen) {
+            return
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                closeCart()
+            }
+        }
+
+        const previousOverflow = document.body.style.overflow
+
+        document.body.style.overflow = 'hidden'
+        window.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.body.style.overflow = previousOverflow
+            window.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [isOpen])
 
     const continueToPayment = (data: DeliveryData) => {
         setDeliveryData(data)
@@ -113,7 +145,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             )
 
             if (!response.ok) {
-                throw new Error('Não foi possível finalizar o pedido')
+                throw new Error('Unable to complete the order')
             }
 
             const data: CheckoutResponse = await response.json()
@@ -121,7 +153,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             setOrderId(data.orderId)
             setStep('confirmation')
         } catch (error) {
-            console.error('Erro ao finalizar pedido:', error)
+            console.error('Error completing order:', error)
         } finally {
             setIsLoading(false)
         }
@@ -137,13 +169,56 @@ const Cart = ({ isOpen, onClose }: Props) => {
         onClose()
     }
 
+    const getStepTitle = () => {
+        if (step === 'delivery') {
+            return 'Delivery'
+        }
+
+        if (step === 'payment') {
+            return 'Payment'
+        }
+
+        if (step === 'confirmation') {
+            return 'Order confirmed'
+        }
+
+        return 'Your cart'
+    }
+
     if (!isOpen) {
         return null
     }
 
     return (
         <CartOverlay onClick={closeCart}>
-            <CartContainer onClick={(event) => event.stopPropagation()}>
+            <CartContainer
+                role="dialog"
+                aria-modal="true"
+                aria-label="Shopping cart"
+                onClick={(event) => event.stopPropagation()}
+            >
+                <CartHeader>
+                    <div>
+                        <CartTitle>{getStepTitle()}</CartTitle>
+
+                        {step === 'cart' && items.length > 0 && (
+                            <CartSubtitle>
+                                {items.length === 1
+                                    ? '1 item selected'
+                                    : `${items.length} items selected`}
+                            </CartSubtitle>
+                        )}
+                    </div>
+
+                    <CloseButton
+                        type="button"
+                        onClick={closeCart}
+                        aria-label="Close cart"
+                    >
+                        ×
+                    </CloseButton>
+                </CartHeader>
+
                 {step === 'cart' && (
                     <>
                         {items.length > 0 ? (
@@ -157,7 +232,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                                 <CartItemName>{item.nome}</CartItemName>
 
                                                 <CartItemPrice>
-                                                    {item.preco.toLocaleString('pt-BR', {
+                                                    {item.preco.toLocaleString('en-US', {
                                                         style: 'currency',
                                                         currency: 'BRL'
                                                     })}
@@ -167,7 +242,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                             <RemoveButton
                                                 type="button"
                                                 onClick={() => dispatch(remove(item.id))}
-                                                aria-label={`Remover ${item.nome} do carrinho`}
+                                                aria-label={`Remove ${item.nome} from cart`}
                                             >
                                                 <RemoveIcon src={lixeira} alt="" />
                                             </RemoveButton>
@@ -176,7 +251,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                 </CartList>
 
                                 <Total>
-                                    <span>Valor total</span>
+                                    <TotalLabel>Order total</TotalLabel>
                                     <TotalValue>{formattedTotal}</TotalValue>
                                 </Total>
 
@@ -184,11 +259,19 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                     type="button"
                                     onClick={() => setStep('delivery')}
                                 >
-                                    Continuar com a entrega
+                                    Continue to delivery
                                 </CartButton>
                             </>
                         ) : (
-                            <EmptyMessage>O carrinho está vazio.</EmptyMessage>
+                            <EmptyState>
+                                <EmptyIcon>🛒</EmptyIcon>
+
+                                <EmptyMessage>Your cart is empty</EmptyMessage>
+
+                                <EmptyDescription>
+                                    Explore the menu and add something delicious to your order.
+                                </EmptyDescription>
+                            </EmptyState>
                         )}
                     </>
                 )}
@@ -212,7 +295,9 @@ const Cart = ({ isOpen, onClose }: Props) => {
                     <Confirmation orderId={orderId} onFinish={finishOrder} />
                 )}
 
-                {isLoading && <EmptyMessage>Finalizando pedido...</EmptyMessage>}
+                {isLoading && (
+                    <ProcessingMessage>Processing your order...</ProcessingMessage>
+                )}
             </CartContainer>
         </CartOverlay>
     )

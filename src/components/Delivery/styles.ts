@@ -4,8 +4,11 @@ import { Field, Form as FormikForm } from 'formik'
 import { cores } from '../../styles'
 
 type InputProps = {
-  $small?: boolean
   $hasError?: boolean
+}
+
+type ButtonProps = {
+  $secondary?: boolean
 }
 
 export const Form = styled(FormikForm)`
@@ -13,108 +16,173 @@ export const Form = styled(FormikForm)`
 `
 
 export const Title = styled.h2`
-  margin: 24px 0 16px;
+  margin-top: 4px;
+
+  color: ${cores.branca};
+
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+`
+
+export const Subtitle = styled.p`
+  margin: 8px 0 26px;
+
   color: ${cores.salmaoClaro};
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 16px;
+
+  font-size: 13px;
+  line-height: 1.5;
 `
 
 export const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+
+  width: 100%;
+
+  margin-bottom: 16px;
 
   input {
-    height: 32px;
-    padding: 0 8px;
-    border: 2px solid ${cores.salmaoClaro};
-    background-color: ${cores.salmaoClaro};
-    color: #4b4b4b;
+    width: 100%;
+    height: 46px;
+
+    padding: 0 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+
+    background-color: ${cores.branca};
+    color: ${cores.texto};
+
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 500;
+
     outline: none;
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: #a29b98;
+    }
+
+    &:focus {
+      border-color: ${cores.salmaoClaro};
+
+      box-shadow: 0 0 0 3px rgba(255, 235, 217, 0.2);
+    }
   }
 
   input.input-error {
-    border-color: #8b0000;
+    border-color: #8b1e1e;
+
+    box-shadow: 0 0 0 3px rgba(139, 30, 30, 0.12);
   }
 `
 
 export const Label = styled.label`
-  margin-bottom: 8px;
-  color: ${cores.salmaoClaro};
-  font-size: 14px;
+  margin-bottom: 7px;
+
+  color: ${cores.branca};
+
+  font-size: 13px;
   font-weight: 700;
-  line-height: 14px;
 `
 
 export const Input = styled(Field) <InputProps>`
-  width: ${({ $small }) => ($small ? '155px' : '344px')};
-  height: 32px;
-  padding: 0 8px;
-  border: 2px solid
-    ${({ $hasError }) => ($hasError ? '#8b0000' : cores.salmaoClaro)};
-  background-color: ${cores.salmaoClaro};
-  color: #4b4b4b;
+  width: 100%;
+  height: 46px;
+
+  padding: 0 14px;
+
+  border: 1px solid
+    ${({ $hasError }) =>
+    $hasError ? '#8b1e1e' : 'rgba(255, 255, 255, 0.24)'};
+
+  border-radius: 10px;
+
+  background-color: ${cores.branca};
+  color: ${cores.texto};
+
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
+
   outline: none;
 
-  @media (max-width: 480px) {
-    width: 100%;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: #a29b98;
+  }
+
+  &:focus {
+    border-color: ${cores.salmaoClaro};
+
+    box-shadow: 0 0 0 3px rgba(255, 235, 217, 0.2);
   }
 `
 
 export const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 34px;
+  display: grid;
+  grid-template-columns: 1fr 0.65fr;
 
-  ${FieldGroup} {
-    width: 155px;
-
-    input {
-      width: 155px;
-    }
-  }
+  gap: 12px;
 
   @media (max-width: 480px) {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 0;
-
-    ${FieldGroup},
-    ${FieldGroup} input {
-      width: 100%;
-    }
   }
 `
 
 export const ErrorMessage = styled.span`
-  margin-top: 4px;
-  color: ${cores.branca};
-  font-size: 10px;
-  font-weight: 700;
+  margin-top: 6px;
+
+  color: #fff3f0;
+
+  font-size: 11px;
+  font-weight: 600;
 `
 
 export const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
+
+  gap: 10px;
+
+  margin-top: 24px;
 `
 
-export const Button = styled.button`
-  width: 344px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background-color: ${cores.salmaoClaro};
-  color: ${cores.salmao};
-  font-size: 14px;
-  font-weight: 700;
+export const Button = styled.button<ButtonProps>`
+  width: 100%;
+  min-height: 46px;
 
-  @media (max-width: 480px) {
-    width: 100%;
+  padding: 0 18px;
+
+  border: ${({ $secondary }) =>
+    $secondary ? '1px solid rgba(255, 255, 255, 0.32)' : 'none'};
+
+  border-radius: 11px;
+
+  background-color: ${({ $secondary }) =>
+    $secondary ? 'transparent' : cores.branca};
+
+  color: ${({ $secondary }) =>
+    $secondary ? cores.branca : cores.salmaoEscuro};
+
+  font-size: 14px;
+  font-weight: 800;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background-color: ${({ $secondary }) =>
+    $secondary ? 'rgba(255, 255, 255, 0.1)' : cores.salmaoClaro};
+
+    transform: translateY(-1px);
   }
 `
