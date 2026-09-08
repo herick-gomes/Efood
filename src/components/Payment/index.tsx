@@ -5,6 +5,7 @@ import InputMask from 'react-input-mask'
 import {
     Button,
     ButtonsContainer,
+    CheckoutError,
     ErrorMessage,
     FieldGroup,
     Form,
@@ -29,11 +30,19 @@ export type PaymentData = {
 
 type Props = {
     total: number
+    isLoading: boolean
+    error: string
     onBack: () => void
-    onSubmitPayment: (paymentData: PaymentData) => void
+    onSubmitPayment: (paymentData: PaymentData) => void | Promise<void>
 }
 
-const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
+const Payment = ({
+    total,
+    isLoading,
+    error,
+    onBack,
+    onSubmitPayment
+}: Props) => {
     const initialValues: PaymentData = {
         cardName: '',
         cardNumber: '',
@@ -91,6 +100,13 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                         <PriceValue>{formattedTotal}</PriceValue>
                     </PriceBox>
 
+                    {error && (
+                        <CheckoutError role="alert">
+                            <strong>Payment failed</strong>
+                            <span>{error}</span>
+                        </CheckoutError>
+                    )}
+
                     <FieldGroup>
                         <Label htmlFor="cardName">Name on card</Label>
 
@@ -103,6 +119,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             $hasError={Boolean(errors.cardName && touched.cardName)}
+                            disabled={isLoading}
                         />
 
                         {errors.cardName && touched.cardName && (
@@ -123,6 +140,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                                 value={values.cardNumber}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
+                                disabled={isLoading}
                                 className={
                                     errors.cardNumber && touched.cardNumber ? 'input-error' : ''
                                 }
@@ -145,6 +163,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                                 value={values.cvv}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
+                                disabled={isLoading}
                                 className={errors.cvv && touched.cvv ? 'input-error' : ''}
                             />
 
@@ -167,6 +186,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                                 value={values.expiresMonth}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
+                                disabled={isLoading}
                                 className={
                                     errors.expiresMonth && touched.expiresMonth
                                         ? 'input-error'
@@ -191,6 +211,7 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                                 value={values.expiresYear}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
+                                disabled={isLoading}
                                 className={
                                     errors.expiresYear && touched.expiresYear
                                         ? 'input-error'
@@ -205,9 +226,16 @@ const Payment = ({ total, onBack, onSubmitPayment }: Props) => {
                     </ValidityRow>
 
                     <ButtonsContainer>
-                        <Button type="submit">Place order</Button>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Processing order...' : 'Place order'}
+                        </Button>
 
-                        <Button type="button" $secondary onClick={onBack}>
+                        <Button
+                            type="button"
+                            $secondary
+                            onClick={onBack}
+                            disabled={isLoading}
+                        >
                             Back to delivery
                         </Button>
                     </ButtonsContainer>

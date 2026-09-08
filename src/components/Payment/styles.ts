@@ -62,6 +62,30 @@ export const PriceValue = styled.strong`
   font-weight: 900;
 `
 
+export const CheckoutError = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-bottom: 20px;
+  padding: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+
+  background-color: rgba(120, 20, 20, 0.2);
+  color: ${cores.branca};
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  strong {
+    font-size: 13px;
+    font-weight: 800;
+  }
+`
+
 export const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -89,7 +113,8 @@ export const FieldGroup = styled.div`
 
     transition:
       border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
 
     &::placeholder {
       color: #a29b98;
@@ -99,6 +124,12 @@ export const FieldGroup = styled.div`
       border-color: ${cores.salmaoClaro};
 
       box-shadow: 0 0 0 3px rgba(255, 235, 217, 0.2);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+
+      opacity: 0.7;
     }
   }
 
@@ -140,7 +171,8 @@ export const Input = styled(Field) <InputProps>`
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
 
   &::placeholder {
     color: #a29b98;
@@ -150,6 +182,12 @@ export const Input = styled(Field) <InputProps>`
     border-color: ${cores.salmaoClaro};
 
     box-shadow: 0 0 0 3px rgba(255, 235, 217, 0.2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.7;
   }
 `
 
@@ -161,6 +199,7 @@ export const PaymentRow = styled.div`
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+
     gap: 0;
   }
 `
@@ -173,6 +212,7 @@ export const ValidityRow = styled.div`
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+
     gap: 0;
   }
 `
@@ -217,12 +257,21 @@ export const Button = styled.button<ButtonProps>`
 
   transition:
     background-color 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    opacity 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: ${({ $secondary }) =>
     $secondary ? 'rgba(255, 255, 255, 0.1)' : cores.salmaoClaro};
 
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.62;
+
+    transform: none;
   }
 `

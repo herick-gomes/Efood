@@ -108,7 +108,7 @@ const ProductModal = ({
 
                     <ModalDescription>{description}</ModalDescription>
 
-                    {portion && <Portion>Serves: {portion}</Portion>}
+                    {portion && <Portion>{portion}</Portion>}
 
                     <Price>{formattedPrice}</Price>
 

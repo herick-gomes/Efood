@@ -27,7 +27,6 @@ import {
     EmptyIcon,
     EmptyMessage,
     EmptyState,
-    ProcessingMessage,
     RemoveButton,
     RemoveIcon,
     Total,
@@ -55,6 +54,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
     const [deliveryData, setDeliveryData] = useState<DeliveryData | null>(null)
     const [orderId, setOrderId] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [checkoutError, setCheckoutError] = useState('')
 
     const total = items.reduce((accumulator, item) => {
         return accumulator + item.preco
@@ -67,6 +67,9 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const closeCart = () => {
         setStep('cart')
+        setCheckoutError('')
+        setIsLoading(false)
+
         onClose()
     }
 
@@ -76,7 +79,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
         }
 
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
+            if (event.key === 'Escape' && !isLoading) {
                 closeCart()
             }
         }
@@ -90,15 +93,25 @@ const Cart = ({ isOpen, onClose }: Props) => {
             document.body.style.overflow = previousOverflow
             window.removeEventListener('keydown', handleKeyDown)
         }
-    }, [isOpen])
+    }, [isOpen, isLoading])
 
     const continueToPayment = (data: DeliveryData) => {
         setDeliveryData(data)
+        setCheckoutError('')
         setStep('payment')
     }
 
+    const backToDelivery = () => {
+        if (isLoading) {
+            return
+        }
+
+        setCheckoutError('')
+        setStep('delivery')
+    }
+
     const finishPayment = async (paymentData: PaymentData) => {
-        if (!deliveryData) {
+        if (!deliveryData || isLoading) {
             return
         }
 
@@ -132,6 +145,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
         try {
             setIsLoading(true)
+            setCheckoutError('')
 
             const response = await fetch(
                 'https://api-ebac.vercel.app/api/efood/checkout',
@@ -154,6 +168,10 @@ const Cart = ({ isOpen, onClose }: Props) => {
             setStep('confirmation')
         } catch (error) {
             console.error('Error completing order:', error)
+
+            setCheckoutError(
+                'We could not complete your order. Please check your information and try again.'
+            )
         } finally {
             setIsLoading(false)
         }
@@ -164,6 +182,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
         setOrderId('')
         setDeliveryData(null)
+        setCheckoutError('')
         setStep('cart')
 
         onClose()
@@ -190,7 +209,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
     }
 
     return (
-        <CartOverlay onClick={closeCart}>
+        <CartOverlay onClick={() => !isLoading && closeCart()}>
             <CartContainer
                 role="dialog"
                 aria-modal="true"
@@ -214,6 +233,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                         type="button"
                         onClick={closeCart}
                         aria-label="Close cart"
+                        disabled={isLoading}
                     >
                         ×
                     </CloseButton>
@@ -286,17 +306,15 @@ const Cart = ({ isOpen, onClose }: Props) => {
                 {step === 'payment' && (
                     <Payment
                         total={total}
-                        onBack={() => setStep('delivery')}
+                        isLoading={isLoading}
+                        error={checkoutError}
+                        onBack={backToDelivery}
                         onSubmitPayment={finishPayment}
                     />
                 )}
 
                 {step === 'confirmation' && (
                     <Confirmation orderId={orderId} onFinish={finishOrder} />
-                )}
-
-                {isLoading && (
-                    <ProcessingMessage>Processing your order...</ProcessingMessage>
                 )}
             </CartContainer>
         </CartOverlay>
