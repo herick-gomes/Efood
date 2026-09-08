@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import lixeira from '../../assets/images/lixeira.png'
@@ -65,13 +65,13 @@ const Cart = ({ isOpen, onClose }: Props) => {
         currency: 'BRL'
     })
 
-    const closeCart = () => {
+    const closeCart = useCallback(() => {
         setStep('cart')
         setCheckoutError('')
         setIsLoading(false)
 
         onClose()
-    }
+    }, [onClose])
 
     useEffect(() => {
         if (!isOpen) {
@@ -93,7 +93,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             document.body.style.overflow = previousOverflow
             window.removeEventListener('keydown', handleKeyDown)
         }
-    }, [isOpen, isLoading])
+    }, [isOpen, isLoading, closeCart])
 
     const continueToPayment = (data: DeliveryData) => {
         setDeliveryData(data)
