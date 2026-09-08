@@ -5,9 +5,11 @@ import { cores } from '../../styles'
 export const CartOverlay = styled.div`
   position: fixed;
   inset: 0;
+
   z-index: 1100;
 
   background-color: rgba(20, 15, 13, 0.62);
+
   backdrop-filter: blur(4px);
 `
 
@@ -16,8 +18,10 @@ export const CartContainer = styled.aside`
   top: 0;
   right: 0;
 
-  width: 420px;
+  width: min(420px, 100%);
+
   height: 100vh;
+  height: 100dvh;
 
   padding: 28px;
 
@@ -27,9 +31,12 @@ export const CartContainer = styled.aside`
 
   box-shadow: -12px 0 40px rgba(0, 0, 0, 0.2);
 
-  @media (max-width: 480px) {
-    width: 100%;
+  @media (max-width: 600px) {
     padding: 24px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 16px;
   }
 `
 
@@ -37,6 +44,8 @@ export const CartHeader = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+
+  gap: 16px;
 
   margin-bottom: 28px;
 `
@@ -47,6 +56,10 @@ export const CartTitle = styled.h2`
   font-size: 26px;
   font-weight: 900;
   letter-spacing: -0.4px;
+
+  @media (max-width: 480px) {
+    font-size: 23px;
+  }
 `
 
 export const CartSubtitle = styled.p`
@@ -59,6 +72,7 @@ export const CartSubtitle = styled.p`
 
 export const CloseButton = styled.button`
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
 
@@ -103,6 +117,7 @@ export const CartItem = styled.li`
   min-height: 112px;
 
   padding: 12px;
+
   gap: 14px;
 
   background-color: ${cores.branca};
@@ -110,6 +125,12 @@ export const CartItem = styled.li`
   border-radius: 14px;
 
   box-shadow: 0 5px 18px rgba(80, 30, 30, 0.1);
+
+  @media (max-width: 380px) {
+    min-height: 96px;
+
+    gap: 10px;
+  }
 `
 
 export const CartItemImage = styled.img`
@@ -121,6 +142,11 @@ export const CartItemImage = styled.img`
   border-radius: 10px;
 
   object-fit: cover;
+
+  @media (max-width: 380px) {
+    width: 72px;
+    height: 72px;
+  }
 `
 
 export const CartItemContent = styled.div`
@@ -141,6 +167,10 @@ export const CartItemName = styled.h3`
   line-height: 1.3;
 
   text-overflow: ellipsis;
+
+  @media (max-width: 380px) {
+    font-size: 14px;
+  }
 `
 
 export const CartItemPrice = styled.p`
@@ -148,6 +178,10 @@ export const CartItemPrice = styled.p`
 
   font-size: 15px;
   font-weight: 800;
+
+  @media (max-width: 380px) {
+    font-size: 14px;
+  }
 `
 
 export const RemoveButton = styled.button`
@@ -175,7 +209,16 @@ export const RemoveButton = styled.button`
 
   &:hover {
     background-color: #f7d7cd;
+
     transform: scale(1.05);
+  }
+
+  @media (max-width: 380px) {
+    right: 10px;
+    bottom: 10px;
+
+    width: 28px;
+    height: 28px;
   }
 `
 
@@ -190,6 +233,8 @@ export const Total = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  gap: 16px;
 
   margin-top: 32px;
   padding-top: 22px;
@@ -209,6 +254,12 @@ export const TotalValue = styled.span`
 
   font-size: 22px;
   font-weight: 900;
+
+  white-space: nowrap;
+
+  @media (max-width: 380px) {
+    font-size: 19px;
+  }
 `
 
 export const CartButton = styled.button`
@@ -253,6 +304,10 @@ export const EmptyState = styled.div`
   padding: 80px 24px;
 
   text-align: center;
+
+  @media (max-width: 480px) {
+    padding: 64px 16px;
+  }
 `
 
 export const EmptyIcon = styled.span`

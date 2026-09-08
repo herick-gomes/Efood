@@ -25,8 +25,11 @@ export const GlobalCss = createGlobalStyle`
   }
 
   body {
+    overflow-x: hidden;
+
     background-color: ${cores.bege};
     color: ${cores.texto};
+
     -webkit-font-smoothing: antialiased;
   }
 
@@ -50,14 +53,21 @@ export const GlobalCss = createGlobalStyle`
   }
 
   .container {
-    max-width: 1120px;
     width: calc(100% - 48px);
+    max-width: 1120px;
+
     margin: 0 auto;
   }
 
   @media (max-width: 768px) {
     .container {
       width: calc(100% - 32px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      width: calc(100% - 24px);
     }
   }
 `

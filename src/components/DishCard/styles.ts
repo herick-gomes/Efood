@@ -21,10 +21,12 @@ export const Card = styled.article`
     transform 0.25s ease,
     box-shadow 0.25s ease;
 
-  &:hover {
-    transform: translateY(-5px);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-5px);
 
-    box-shadow: 0 14px 36px rgba(70, 35, 25, 0.12);
+      box-shadow: 0 14px 36px rgba(70, 35, 25, 0.12);
+    }
   }
 `
 
@@ -42,8 +44,14 @@ export const DishImage = styled.img`
 
   transition: transform 0.4s ease;
 
-  ${Card}:hover & {
-    transform: scale(1.04);
+  @media (hover: hover) {
+    ${Card}:hover & {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (max-width: 480px) {
+    height: 190px;
   }
 `
 
@@ -53,6 +61,10 @@ export const CardContent = styled.div`
   flex-direction: column;
 
   padding: 20px;
+
+  @media (max-width: 480px) {
+    padding: 18px;
+  }
 `
 
 export const Title = styled.h3`
@@ -61,6 +73,10 @@ export const Title = styled.h3`
   font-size: 19px;
   font-weight: 800;
   line-height: 1.3;
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
 `
 
 export const Description = styled.p`
@@ -91,7 +107,7 @@ export const Price = styled.p`
 
 export const AddButton = styled.button`
   width: 100%;
-  min-height: 42px;
+  min-height: 44px;
 
   margin-top: 14px;
 
@@ -110,6 +126,11 @@ export const AddButton = styled.button`
 
   &:hover {
     background-color: ${cores.salmaoEscuro};
+
     transform: translateY(-1px);
+  }
+
+  @media (max-width: 480px) {
+    min-height: 46px;
   }
 `

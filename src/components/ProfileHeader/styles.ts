@@ -6,6 +6,7 @@ import { cores } from '../../styles'
 
 export const HeaderBar = styled.header`
   min-height: 140px;
+
   background-color: ${cores.salmaoClaro};
 
   background-image:
@@ -23,12 +24,15 @@ export const HeaderBar = styled.header`
   border-bottom: 1px solid rgba(230, 103, 103, 0.12);
 
   @media (max-width: 768px) {
-    padding: 24px 0;
+    min-height: auto;
+
+    padding: 20px 0;
   }
 `
 
 export const HeaderContent = styled.div`
   position: relative;
+
   min-height: 140px;
 
   display: flex;
@@ -38,10 +42,14 @@ export const HeaderContent = styled.div`
   @media (max-width: 768px) {
     min-height: auto;
 
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'logo logo'
+      'navigation cart';
 
-    gap: 20px;
+    column-gap: 12px;
+    row-gap: 18px;
   }
 `
 
@@ -60,11 +68,20 @@ export const Navigation = styled(Link)`
 
   &:hover {
     color: ${cores.salmao};
+
     transform: translateX(-3px);
   }
 
   @media (max-width: 768px) {
-    order: 2;
+    grid-area: navigation;
+
+    justify-self: start;
+
+    font-size: 14px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 12px;
   }
 `
 
@@ -88,13 +105,18 @@ export const Logo = styled.div`
 
   img {
     display: block;
+
     width: 100%;
   }
 
   @media (max-width: 768px) {
     position: static;
 
-    order: 1;
+    grid-area: logo;
+
+    width: 112px;
+
+    justify-self: center;
 
     transform: none;
   }
@@ -109,11 +131,12 @@ export const Cart = styled.button`
   border-radius: 10px;
 
   background-color: rgba(255, 255, 255, 0.7);
-
   color: ${cores.salmaoEscuro};
 
   font-size: 14px;
   font-weight: 700;
+
+  white-space: nowrap;
 
   transition:
     background-color 0.2s ease,
@@ -130,6 +153,20 @@ export const Cart = styled.button`
   }
 
   @media (max-width: 768px) {
-    order: 3;
+    grid-area: cart;
+
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    justify-self: end;
+
+    font-size: 13px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0 10px;
+
+    font-size: 12px;
   }
 `

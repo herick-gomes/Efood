@@ -30,7 +30,10 @@ const RestaurantCard = ({
     rating,
     featured = false
 }: Props) => (
-    <Card>
+    <Card
+        to={`/perfil/${id}`}
+        aria-label={`View ${title} restaurant`}
+    >
         <RestaurantImage src={image} alt={title} />
 
         <Infos>
@@ -50,7 +53,7 @@ const RestaurantCard = ({
 
             <Description>{description}</Description>
 
-            <ViewButton to={`/perfil/${id}`}>View restaurant</ViewButton>
+            <ViewButton>View restaurant</ViewButton>
         </CardContent>
     </Card>
 )

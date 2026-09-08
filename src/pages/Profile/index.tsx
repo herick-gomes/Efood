@@ -1,72 +1,86 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
+import DishList from '../../components/DishList'
 import Footer from '../../components/Footer'
-import Header from '../../components/Header'
-import RestaurantList from '../../components/RestaurantList'
+import ProfileHeader from '../../components/ProfileHeader'
+import RestaurantHero from '../../components/RestaurantHero'
 import StatusState from '../../components/StatusState'
 
 import Restaurant from '../../models/Restaurant'
 
-import { translateRestaurants } from '../../utils/translateRestaurant'
+import { translateRestaurant } from '../../utils/translateRestaurant'
 
-const Home = () => {
-    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+const Profile = () => {
+    const { id } = useParams()
+
+    const [restaurant, setRestaurant] = useState<Restaurant>()
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState('')
 
-    const loadRestaurants = useCallback(async (signal?: AbortSignal) => {
-        try {
-            setIsLoading(true)
-            setError('')
+    const loadRestaurant = useCallback(
+        async (signal?: AbortSignal) => {
+            if (!id) {
+                setError('Restaurant not found.')
+                setIsLoading(false)
 
-            const response = await fetch(
-                'https://api-ebac.vercel.app/api/efood/restaurantes',
-                { signal }
-            )
-
-            if (!response.ok) {
-                throw new Error('Unable to load restaurants')
-            }
-
-            const data: Restaurant[] = await response.json()
-
-            setRestaurants(translateRestaurants(data))
-        } catch (error) {
-            if (error instanceof DOMException && error.name === 'AbortError') {
                 return
             }
 
-            console.error('Error loading restaurants:', error)
+            try {
+                setIsLoading(true)
+                setError('')
 
-            setError(
-                'We could not load the restaurants right now. Please try again.'
-            )
-        } finally {
-            if (!signal?.aborted) {
-                setIsLoading(false)
+                const response = await fetch(
+                    `https://api-ebac.vercel.app/api/efood/restaurantes/${id}`,
+                    { signal }
+                )
+
+                if (!response.ok) {
+                    throw new Error('Unable to load restaurant')
+                }
+
+                const data: Restaurant = await response.json()
+
+                setRestaurant(translateRestaurant(data))
+            } catch (error) {
+                if (error instanceof DOMException && error.name === 'AbortError') {
+                    return
+                }
+
+                console.error('Error loading restaurant:', error)
+
+                setError(
+                    'We could not load this restaurant right now. Please try again.'
+                )
+            } finally {
+                if (!signal?.aborted) {
+                    setIsLoading(false)
+                }
             }
-        }
-    }, [])
+        },
+        [id]
+    )
 
     useEffect(() => {
         const controller = new AbortController()
 
-        loadRestaurants(controller.signal)
+        loadRestaurant(controller.signal)
 
         return () => {
             controller.abort()
         }
-    }, [loadRestaurants])
+    }, [loadRestaurant])
 
     return (
         <>
-            <Header />
+            <ProfileHeader />
 
             {isLoading && (
                 <StatusState
                     loading
-                    title="Loading restaurants"
-                    description="We are preparing the best restaurant options for you."
+                    title="Loading restaurant"
+                    description="We are preparing the menu for you."
                 />
             )}
 
@@ -75,12 +89,20 @@ const Home = () => {
                     title="Something went wrong"
                     description={error}
                     actionLabel="Try again"
-                    onAction={() => loadRestaurants()}
+                    onAction={() => loadRestaurant()}
                 />
             )}
 
-            {!isLoading && !error && (
-                <RestaurantList restaurants={restaurants} />
+            {!isLoading && !error && restaurant && (
+                <>
+                    <RestaurantHero
+                        category={restaurant.tipo}
+                        name={restaurant.titulo}
+                        image={restaurant.capa}
+                    />
+
+                    <DishList dishes={restaurant.cardapio} />
+                </>
             )}
 
             <Footer />
@@ -88,4 +110,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default Profile

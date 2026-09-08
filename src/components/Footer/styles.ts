@@ -9,6 +9,10 @@ export const FooterContainer = styled.footer`
   border-top: 1px solid ${cores.borda};
 
   background-color: ${cores.salmaoClaro};
+
+  @media (max-width: 480px) {
+    padding: 48px 0 32px;
+  }
 `
 
 export const FooterContent = styled.div`
@@ -28,11 +32,16 @@ export const Logo = styled(Link)`
 
   img {
     display: block;
+
     width: 100%;
   }
 
   &:hover {
     transform: scale(1.04);
+  }
+
+  @media (max-width: 480px) {
+    width: 112px;
   }
 `
 
@@ -45,6 +54,12 @@ export const FooterDescription = styled.p`
 
   font-size: 14px;
   line-height: 1.7;
+
+  @media (max-width: 480px) {
+    margin-top: 22px;
+
+    font-size: 13px;
+  }
 `
 
 export const Stack = styled.ul`
@@ -56,6 +71,12 @@ export const Stack = styled.ul`
   gap: 8px;
 
   margin-top: 24px;
+
+  @media (max-width: 480px) {
+    margin-top: 20px;
+
+    gap: 6px;
+  }
 `
 
 export const StackItem = styled.li`
@@ -69,6 +90,12 @@ export const StackItem = styled.li`
 
   font-size: 11px;
   font-weight: 700;
+
+  @media (max-width: 480px) {
+    padding: 6px 10px;
+
+    font-size: 10px;
+  }
 `
 
 export const Copyright = styled.p`
@@ -78,4 +105,10 @@ export const Copyright = styled.p`
 
   font-size: 11px;
   line-height: 1.5;
+
+  @media (max-width: 480px) {
+    margin-top: 28px;
+
+    font-size: 10px;
+  }
 `
