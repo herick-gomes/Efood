@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import lixeira from '../../assets/images/lixeira.png'
@@ -7,7 +7,8 @@ import { clear, remove } from '../../store/reducers/cart'
 
 import Confirmation from '../Confirmation'
 import Delivery, { DeliveryData } from '../Delivery'
-import Payment, { PaymentData } from '../Payment'
+import Payment from '../Payment'
+import { orderPayload, placeOrder } from '../../services/efoodApi'
 
 import {
     CartButton,
@@ -31,7 +32,7 @@ import {
     RemoveIcon,
     Total,
     TotalLabel,
-    TotalValue
+    TotalValue,
 } from './styles'
 
 type Props = {
@@ -41,10 +42,6 @@ type Props = {
 
 type CheckoutStep = 'cart' | 'delivery' | 'payment' | 'confirmation'
 
-type CheckoutResponse = {
-    orderId: string
-}
-
 const Cart = ({ isOpen, onClose }: Props) => {
     const dispatch = useDispatch()
 
@@ -53,6 +50,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
     const [step, setStep] = useState<CheckoutStep>('cart')
     const [deliveryData, setDeliveryData] = useState<DeliveryData | null>(null)
     const [orderId, setOrderId] = useState('')
+    const [confirmedTotal, setConfirmedTotal] = useState('')
+    const intent = useRef<{ fingerprint: string; key: string } | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [checkoutError, setCheckoutError] = useState('')
 
@@ -62,7 +61,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const formattedTotal = total.toLocaleString('en-US', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
     })
 
     const closeCart = useCallback(() => {
@@ -110,67 +109,25 @@ const Cart = ({ isOpen, onClose }: Props) => {
         setStep('delivery')
     }
 
-    const finishPayment = async (paymentData: PaymentData) => {
-        if (!deliveryData || isLoading) {
-            return
+    const finishPayment = async () => {
+        if (!deliveryData || isLoading) return
+        const payload = orderPayload(items, deliveryData)
+        const fingerprint = JSON.stringify(payload)
+        if (!intent.current || intent.current.fingerprint !== fingerprint) {
+            intent.current = { fingerprint, key: crypto.randomUUID() }
         }
-
-        const requestBody = {
-            products: items.map((item) => ({
-                id: item.id,
-                price: item.preco
-            })),
-            delivery: {
-                receiver: deliveryData.receiver,
-                address: {
-                    description: deliveryData.address,
-                    city: deliveryData.city,
-                    zipCode: deliveryData.zipCode,
-                    number: Number(deliveryData.number),
-                    complement: deliveryData.complement
-                }
-            },
-            payment: {
-                card: {
-                    name: paymentData.cardName,
-                    number: paymentData.cardNumber,
-                    code: Number(paymentData.cvv),
-                    expires: {
-                        month: Number(paymentData.expiresMonth),
-                        year: Number(paymentData.expiresYear)
-                    }
-                }
-            }
-        }
-
+        setIsLoading(true)
+        setCheckoutError('')
         try {
-            setIsLoading(true)
-            setCheckoutError('')
-
-            const response = await fetch(
-                'https://api-ebac.vercel.app/api/efood/checkout',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            )
-
-            if (!response.ok) {
-                throw new Error('Unable to complete the order')
-            }
-
-            const data: CheckoutResponse = await response.json()
-
-            setOrderId(data.orderId)
+            const order = await placeOrder(payload, intent.current.key)
+            setOrderId(order.id)
+            setConfirmedTotal(order.total)
             setStep('confirmation')
         } catch (error) {
-            console.error('Error completing order:', error)
-
             setCheckoutError(
-                'We could not complete your order. Please check your information and try again.'
+                error instanceof Error
+                    ? error.message
+                    : 'Unable to place the order. Please try again.',
             )
         } finally {
             setIsLoading(false)
@@ -179,6 +136,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const finishOrder = () => {
         dispatch(clear())
+        intent.current = null
+        setConfirmedTotal('')
 
         setOrderId('')
         setDeliveryData(null)
@@ -246,25 +205,38 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                 <CartList>
                                     {items.map((item) => (
                                         <CartItem key={item.id}>
-                                            <CartItemImage src={item.foto} alt={item.nome} />
+                                            <CartItemImage
+                                                src={item.foto}
+                                                alt={item.nome}
+                                            />
 
                                             <CartItemContent>
-                                                <CartItemName>{item.nome}</CartItemName>
+                                                <CartItemName>
+                                                    {item.nome}
+                                                </CartItemName>
 
                                                 <CartItemPrice>
-                                                    {item.preco.toLocaleString('en-US', {
-                                                        style: 'currency',
-                                                        currency: 'BRL'
-                                                    })}
+                                                    {item.preco.toLocaleString(
+                                                        'en-US',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'BRL',
+                                                        },
+                                                    )}
                                                 </CartItemPrice>
                                             </CartItemContent>
 
                                             <RemoveButton
                                                 type="button"
-                                                onClick={() => dispatch(remove(item.id))}
+                                                onClick={() =>
+                                                    dispatch(remove(item.id))
+                                                }
                                                 aria-label={`Remove ${item.nome} from cart`}
                                             >
-                                                <RemoveIcon src={lixeira} alt="" />
+                                                <RemoveIcon
+                                                    src={lixeira}
+                                                    alt=""
+                                                />
                                             </RemoveButton>
                                         </CartItem>
                                     ))}
@@ -289,7 +261,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                 <EmptyMessage>Your cart is empty</EmptyMessage>
 
                                 <EmptyDescription>
-                                    Explore the menu and add something delicious to your order.
+                                    Explore the menu and add something delicious
+                                    to your order.
                                 </EmptyDescription>
                             </EmptyState>
                         )}
@@ -314,7 +287,19 @@ const Cart = ({ isOpen, onClose }: Props) => {
                 )}
 
                 {step === 'confirmation' && (
-                    <Confirmation orderId={orderId} onFinish={finishOrder} />
+                    <>
+                        <CartSubtitle>
+                            Simulated order · confirmed total:{' '}
+                            {Number(confirmedTotal).toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'BRL',
+                            })}
+                        </CartSubtitle>
+                        <Confirmation
+                            orderId={orderId}
+                            onFinish={finishOrder}
+                        />
+                    </>
                 )}
             </CartContainer>
         </CartOverlay>
