@@ -1,39 +1,24 @@
-import { Formik } from 'formik'
-import * as Yup from 'yup'
-import InputMask from 'react-input-mask'
-
+import { ChangeEvent, FormEvent, useState } from 'react'
+import { authenticate, hasSession, logout } from '../../services/efoodApi'
 import {
     Button,
     ButtonsContainer,
     CheckoutError,
-    ErrorMessage,
     FieldGroup,
-    Form,
-    Input,
     Label,
-    PaymentRow,
     PriceBox,
     PriceLabel,
     PriceValue,
     Subtitle,
     Title,
-    ValidityRow
 } from './styles'
-
-export type PaymentData = {
-    cardName: string
-    cardNumber: string
-    cvv: string
-    expiresMonth: string
-    expiresYear: string
-}
 
 type Props = {
     total: number
     isLoading: boolean
     error: string
     onBack: () => void
-    onSubmitPayment: (paymentData: PaymentData) => void | Promise<void>
+    onSubmitPayment: () => void | Promise<void>
 }
 
 const Payment = ({
@@ -41,208 +26,160 @@ const Payment = ({
     isLoading,
     error,
     onBack,
-    onSubmitPayment
+    onSubmitPayment,
 }: Props) => {
-    const initialValues: PaymentData = {
-        cardName: '',
-        cardNumber: '',
-        cvv: '',
-        expiresMonth: '',
-        expiresYear: ''
-    }
-
-    const validationSchema = Yup.object({
-        cardName: Yup.string()
-            .min(3, 'Enter a valid name')
-            .required('This field is required'),
-
-        cardNumber: Yup.string()
-            .matches(
-                /^\d{4} \d{4} \d{4} \d{4}$/,
-                'Enter the complete card number'
+    const [signedIn, setSignedIn] = useState(hasSession())
+    const [register, setRegister] = useState(false)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [authError, setAuthError] = useState('')
+    const [authBusy, setAuthBusy] = useState(false)
+    const busy = isLoading || authBusy
+    const signIn = async (event: FormEvent) => {
+        event.preventDefault()
+        setAuthBusy(true)
+        setAuthError('')
+        try {
+            await authenticate(username, password, register)
+            setPassword('')
+            setSignedIn(true)
+        } catch (error) {
+            setAuthError(
+                error instanceof Error ? error.message : 'Unable to sign in.',
             )
-            .required('This field is required'),
-
-        cvv: Yup.string()
-            .matches(/^\d{3}$/, 'CVV must contain 3 digits')
-            .required('This field is required'),
-
-        expiresMonth: Yup.string()
-            .matches(/^(0[1-9]|1[0-2])$/, 'Enter a valid month')
-            .required('This field is required'),
-
-        expiresYear: Yup.string()
-            .matches(/^\d{2}$/, 'Enter a valid year')
-            .required('This field is required')
-    })
-
-    const formattedTotal = total.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'BRL'
-    })
-
+        } finally {
+            setAuthBusy(false)
+        }
+    }
+    const submit = async () => {
+        await onSubmitPayment()
+        setSignedIn(hasSession())
+    }
+    const signOut = async () => {
+        setAuthBusy(true)
+        setAuthError('')
+        try {
+            await logout()
+        } catch {
+            setAuthError(
+                'Local session cleared. The refresh token could not be revoked remotely.',
+            )
+        } finally {
+            setSignedIn(false)
+            setAuthBusy(false)
+        }
+    }
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={(values) => onSubmitPayment(values)}
-        >
-            {({ errors, touched, values, handleChange, handleBlur }) => (
-                <Form>
-                    <Title>Payment details</Title>
-
-                    <Subtitle>
-                        Enter your card information to securely complete your order.
-                    </Subtitle>
-
-                    <PriceBox>
-                        <PriceLabel>Order total</PriceLabel>
-                        <PriceValue>{formattedTotal}</PriceValue>
-                    </PriceBox>
-
-                    {error && (
-                        <CheckoutError role="alert">
-                            <strong>Payment failed</strong>
-                            <span>{error}</span>
-                        </CheckoutError>
-                    )}
-
+        <section aria-label="Demo checkout">
+            <Title>Review your demo order</Title>
+            <Subtitle>
+                This is a portfolio demonstration. No payment is collected and
+                no real delivery is scheduled. Do not enter card information.
+            </Subtitle>
+            <PriceBox>
+                <PriceLabel>Estimated total</PriceLabel>
+                <PriceValue>
+                    {total.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'BRL',
+                    })}
+                </PriceValue>
+            </PriceBox>
+            <Subtitle>
+                The server checks current prices and availability. Your
+                confirmed total appears after submission.
+            </Subtitle>
+            {(error || authError) && (
+                <CheckoutError role="alert">
+                    <strong>Unable to continue</strong>
+                    <span>{authError || error}</span>
+                </CheckoutError>
+            )}
+            {!signedIn ? (
+                <form onSubmit={signIn}>
                     <FieldGroup>
-                        <Label htmlFor="cardName">Name on card</Label>
-
-                        <Input
-                            id="cardName"
-                            name="cardName"
-                            placeholder="Full name"
-                            autoComplete="cc-name"
-                            value={values.cardName}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            $hasError={Boolean(errors.cardName && touched.cardName)}
-                            disabled={isLoading}
+                        <Label htmlFor="checkout-username">Username</Label>
+                        <input
+                            id="checkout-username"
+                            value={username}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                setUsername(e.target.value)
+                            }
+                            autoComplete="username"
+                            required
+                            maxLength={150}
+                            disabled={busy}
                         />
-
-                        {errors.cardName && touched.cardName && (
-                            <ErrorMessage>{errors.cardName}</ErrorMessage>
-                        )}
                     </FieldGroup>
-
-                    <PaymentRow>
-                        <FieldGroup>
-                            <Label htmlFor="cardNumber">Card number</Label>
-
-                            <InputMask
-                                id="cardNumber"
-                                name="cardNumber"
-                                mask="9999 9999 9999 9999"
-                                placeholder="0000 0000 0000 0000"
-                                autoComplete="cc-number"
-                                value={values.cardNumber}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                disabled={isLoading}
-                                className={
-                                    errors.cardNumber && touched.cardNumber ? 'input-error' : ''
-                                }
-                            />
-
-                            {errors.cardNumber && touched.cardNumber && (
-                                <ErrorMessage>{errors.cardNumber}</ErrorMessage>
-                            )}
-                        </FieldGroup>
-
-                        <FieldGroup>
-                            <Label htmlFor="cvv">CVV</Label>
-
-                            <InputMask
-                                id="cvv"
-                                name="cvv"
-                                mask="999"
-                                placeholder="123"
-                                autoComplete="cc-csc"
-                                value={values.cvv}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                disabled={isLoading}
-                                className={errors.cvv && touched.cvv ? 'input-error' : ''}
-                            />
-
-                            {errors.cvv && touched.cvv && (
-                                <ErrorMessage>{errors.cvv}</ErrorMessage>
-                            )}
-                        </FieldGroup>
-                    </PaymentRow>
-
-                    <ValidityRow>
-                        <FieldGroup>
-                            <Label htmlFor="expiresMonth">Expiry month</Label>
-
-                            <InputMask
-                                id="expiresMonth"
-                                name="expiresMonth"
-                                mask="99"
-                                placeholder="MM"
-                                autoComplete="cc-exp-month"
-                                value={values.expiresMonth}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                disabled={isLoading}
-                                className={
-                                    errors.expiresMonth && touched.expiresMonth
-                                        ? 'input-error'
-                                        : ''
-                                }
-                            />
-
-                            {errors.expiresMonth && touched.expiresMonth && (
-                                <ErrorMessage>{errors.expiresMonth}</ErrorMessage>
-                            )}
-                        </FieldGroup>
-
-                        <FieldGroup>
-                            <Label htmlFor="expiresYear">Expiry year</Label>
-
-                            <InputMask
-                                id="expiresYear"
-                                name="expiresYear"
-                                mask="99"
-                                placeholder="YY"
-                                autoComplete="cc-exp-year"
-                                value={values.expiresYear}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                disabled={isLoading}
-                                className={
-                                    errors.expiresYear && touched.expiresYear
-                                        ? 'input-error'
-                                        : ''
-                                }
-                            />
-
-                            {errors.expiresYear && touched.expiresYear && (
-                                <ErrorMessage>{errors.expiresYear}</ErrorMessage>
-                            )}
-                        </FieldGroup>
-                    </ValidityRow>
-
+                    <FieldGroup>
+                        <Label htmlFor="checkout-password">Password</Label>
+                        <input
+                            id="checkout-password"
+                            type="password"
+                            value={password}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                setPassword(e.target.value)
+                            }
+                            autoComplete={
+                                register ? 'new-password' : 'current-password'
+                            }
+                            required
+                            minLength={register ? 10 : undefined}
+                            maxLength={128}
+                            disabled={busy}
+                        />
+                    </FieldGroup>
                     <ButtonsContainer>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Processing order...' : 'Place order'}
+                        <Button type="submit" disabled={busy}>
+                            {authBusy
+                                ? 'Please wait...'
+                                : register
+                                  ? 'Create account'
+                                  : 'Sign in'}
                         </Button>
-
                         <Button
                             type="button"
                             $secondary
-                            onClick={onBack}
-                            disabled={isLoading}
+                            disabled={busy}
+                            onClick={() => {
+                                setRegister(!register)
+                                setAuthError('')
+                            }}
                         >
-                            Back to delivery
+                            {register
+                                ? 'Already have an account? Sign in'
+                                : 'New here? Create an account'}
                         </Button>
                     </ButtonsContainer>
-                </Form>
+                </form>
+            ) : (
+                <ButtonsContainer>
+                    <Button type="button" onClick={submit} disabled={busy}>
+                        {isLoading
+                            ? 'Placing order...'
+                            : 'Place simulated order'}
+                    </Button>
+                    <Button
+                        type="button"
+                        $secondary
+                        onClick={signOut}
+                        disabled={busy}
+                    >
+                        Sign out
+                    </Button>
+                </ButtonsContainer>
             )}
-        </Formik>
+            <ButtonsContainer>
+                <Button
+                    type="button"
+                    $secondary
+                    onClick={onBack}
+                    disabled={busy}
+                >
+                    Back to delivery
+                </Button>
+            </ButtonsContainer>
+        </section>
     )
 }
-
 export default Payment

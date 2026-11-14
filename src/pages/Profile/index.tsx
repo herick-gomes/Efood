@@ -9,7 +9,7 @@ import StatusState from '../../components/StatusState'
 
 import Restaurant from '../../models/Restaurant'
 
-import { translateRestaurant } from '../../utils/translateRestaurant'
+import { getRestaurant } from '../../services/efoodApi'
 
 const Profile = () => {
     const { id } = useParams()
@@ -31,18 +31,8 @@ const Profile = () => {
                 setIsLoading(true)
                 setError('')
 
-                const response = await fetch(
-                    `https://api-ebac.vercel.app/api/efood/restaurantes/${id}`,
-                    { signal }
-                )
-
-                if (!response.ok) {
-                    throw new Error('Unable to load restaurant')
-                }
-
-                const data: Restaurant = await response.json()
-
-                setRestaurant(translateRestaurant(data))
+                const data = await getRestaurant(id, signal)
+                setRestaurant(data)
             } catch (error) {
                 if (error instanceof DOMException && error.name === 'AbortError') {
                     return
