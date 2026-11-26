@@ -68,12 +68,22 @@ export const OrderCode = styled.div`
 
   strong {
     margin-top: 6px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 
     color: ${cores.branca};
 
     font-size: 20px;
     font-weight: 900;
     letter-spacing: 0.4px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px;
+
+    strong {
+      font-size: 16px;
+    }
   }
 `
 

@@ -153,6 +153,9 @@ export const Cart = styled.button`
   }
 
   @media (max-width: 768px) {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
     grid-area: cart;
 
     min-height: 40px;
