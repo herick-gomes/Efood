@@ -133,6 +133,10 @@ export const FieldGroup = styled.div`
     }
   }
 
+  @media (max-width: 600px) {
+    input { font-size: 16px; }
+  }
+
   input.input-error {
     border-color: #8b1e1e;
 
@@ -165,6 +169,10 @@ export const Input = styled(Field) <InputProps>`
   color: ${cores.texto};
 
   font-size: 14px;
+
+  @media (max-width: 600px) {
+    font-size: 16px;
+  }
   font-weight: 500;
 
   outline: none;

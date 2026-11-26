@@ -17,25 +17,24 @@ const Confirmation = ({ orderId, onFinish }: Props) => (
     <SuccessCard>
         <ConfirmationIcon>✓</ConfirmationIcon>
 
-        <Title>Order confirmed!</Title>
+        <Title>Pedido de demonstração confirmado!</Title>
 
         <Description>
-            Your order has been successfully placed and is now being prepared.
-            We&apos;ll make sure everything is ready for delivery as soon as possible.
+            Seu pedido foi registrado pela API Efood. Nenhum valor foi cobrado
+            e nenhuma entrega real será realizada.
         </Description>
 
         <OrderCode>
-            <OrderLabel>Order number</OrderLabel>
+            <OrderLabel>Número do pedido</OrderLabel>
             <strong>{orderId}</strong>
         </OrderCode>
 
         <Description>
-            Please note that our delivery partners are not authorized to request any
-            additional payments when your order arrives.
+            Esta demonstração permite testar o fluxo de compra com segurança.
         </Description>
 
         <Button type="button" onClick={onFinish}>
-            Back to restaurant
+            Voltar ao restaurante
         </Button>
     </SuccessCard>
 )

@@ -32,7 +32,7 @@ const DishCard = ({
 }: Props) => {
     const [modalOpen, setModalOpen] = useState(false)
 
-    const formattedPrice = price.toLocaleString('en-US', {
+    const formattedPrice = price.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
     })
@@ -52,7 +52,7 @@ const DishCard = ({
                     <Price>{formattedPrice}</Price>
 
                     <AddButton type="button" onClick={() => setModalOpen(true)}>
-                        View details
+                        Ver detalhes
                     </AddButton>
                 </CardContent>
             </Card>

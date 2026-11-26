@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import lixeira from '../../assets/images/lixeira.png'
@@ -7,7 +7,8 @@ import { clear, remove } from '../../store/reducers/cart'
 
 import Confirmation from '../Confirmation'
 import Delivery, { DeliveryData } from '../Delivery'
-import Payment, { PaymentData } from '../Payment'
+import Payment from '../Payment'
+import { orderPayload, placeOrder } from '../../services/efoodApi'
 
 import {
     CartButton,
@@ -31,7 +32,7 @@ import {
     RemoveIcon,
     Total,
     TotalLabel,
-    TotalValue
+    TotalValue,
 } from './styles'
 
 type Props = {
@@ -41,10 +42,6 @@ type Props = {
 
 type CheckoutStep = 'cart' | 'delivery' | 'payment' | 'confirmation'
 
-type CheckoutResponse = {
-    orderId: string
-}
-
 const Cart = ({ isOpen, onClose }: Props) => {
     const dispatch = useDispatch()
 
@@ -53,6 +50,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
     const [step, setStep] = useState<CheckoutStep>('cart')
     const [deliveryData, setDeliveryData] = useState<DeliveryData | null>(null)
     const [orderId, setOrderId] = useState('')
+    const [confirmedTotal, setConfirmedTotal] = useState('')
+    const intent = useRef<{ fingerprint: string; key: string } | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [checkoutError, setCheckoutError] = useState('')
 
@@ -60,9 +59,9 @@ const Cart = ({ isOpen, onClose }: Props) => {
         return accumulator + item.preco
     }, 0)
 
-    const formattedTotal = total.toLocaleString('en-US', {
+    const formattedTotal = total.toLocaleString('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
     })
 
     const closeCart = useCallback(() => {
@@ -110,67 +109,25 @@ const Cart = ({ isOpen, onClose }: Props) => {
         setStep('delivery')
     }
 
-    const finishPayment = async (paymentData: PaymentData) => {
-        if (!deliveryData || isLoading) {
-            return
+    const finishPayment = async () => {
+        if (!deliveryData || isLoading) return
+        const payload = orderPayload(items, deliveryData)
+        const fingerprint = JSON.stringify(payload)
+        if (!intent.current || intent.current.fingerprint !== fingerprint) {
+            intent.current = { fingerprint, key: crypto.randomUUID() }
         }
-
-        const requestBody = {
-            products: items.map((item) => ({
-                id: item.id,
-                price: item.preco
-            })),
-            delivery: {
-                receiver: deliveryData.receiver,
-                address: {
-                    description: deliveryData.address,
-                    city: deliveryData.city,
-                    zipCode: deliveryData.zipCode,
-                    number: Number(deliveryData.number),
-                    complement: deliveryData.complement
-                }
-            },
-            payment: {
-                card: {
-                    name: paymentData.cardName,
-                    number: paymentData.cardNumber,
-                    code: Number(paymentData.cvv),
-                    expires: {
-                        month: Number(paymentData.expiresMonth),
-                        year: Number(paymentData.expiresYear)
-                    }
-                }
-            }
-        }
-
+        setIsLoading(true)
+        setCheckoutError('')
         try {
-            setIsLoading(true)
-            setCheckoutError('')
-
-            const response = await fetch(
-                'https://api-ebac.vercel.app/api/efood/checkout',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            )
-
-            if (!response.ok) {
-                throw new Error('Unable to complete the order')
-            }
-
-            const data: CheckoutResponse = await response.json()
-
-            setOrderId(data.orderId)
+            const order = await placeOrder(payload, intent.current.key)
+            setOrderId(order.id)
+            setConfirmedTotal(order.total)
             setStep('confirmation')
         } catch (error) {
-            console.error('Error completing order:', error)
-
             setCheckoutError(
-                'We could not complete your order. Please check your information and try again.'
+                error instanceof Error
+                    ? error.message
+                    : 'Não foi possível registrar o pedido. Tente novamente.',
             )
         } finally {
             setIsLoading(false)
@@ -179,6 +136,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const finishOrder = () => {
         dispatch(clear())
+        intent.current = null
+        setConfirmedTotal('')
 
         setOrderId('')
         setDeliveryData(null)
@@ -190,18 +149,18 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const getStepTitle = () => {
         if (step === 'delivery') {
-            return 'Delivery'
+            return 'Entrega'
         }
 
         if (step === 'payment') {
-            return 'Payment'
+            return 'Pagamento'
         }
 
         if (step === 'confirmation') {
-            return 'Order confirmed'
+            return 'Pedido confirmado'
         }
 
-        return 'Your cart'
+        return 'Seu carrinho'
     }
 
     if (!isOpen) {
@@ -213,7 +172,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             <CartContainer
                 role="dialog"
                 aria-modal="true"
-                aria-label="Shopping cart"
+                aria-label="Carrinho de compras"
                 onClick={(event) => event.stopPropagation()}
             >
                 <CartHeader>
@@ -223,8 +182,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
                         {step === 'cart' && items.length > 0 && (
                             <CartSubtitle>
                                 {items.length === 1
-                                    ? '1 item selected'
-                                    : `${items.length} items selected`}
+                                    ? '1 item selecionado'
+                                    : `${items.length} itens selecionados`}
                             </CartSubtitle>
                         )}
                     </div>
@@ -232,7 +191,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                     <CloseButton
                         type="button"
                         onClick={closeCart}
-                        aria-label="Close cart"
+                        aria-label="Fechar carrinho"
                         disabled={isLoading}
                     >
                         ×
@@ -246,32 +205,45 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                 <CartList>
                                     {items.map((item) => (
                                         <CartItem key={item.id}>
-                                            <CartItemImage src={item.foto} alt={item.nome} />
+                                            <CartItemImage
+                                                src={item.foto}
+                                                alt={item.nome}
+                                            />
 
                                             <CartItemContent>
-                                                <CartItemName>{item.nome}</CartItemName>
+                                                <CartItemName>
+                                                    {item.nome}
+                                                </CartItemName>
 
                                                 <CartItemPrice>
-                                                    {item.preco.toLocaleString('en-US', {
-                                                        style: 'currency',
-                                                        currency: 'BRL'
-                                                    })}
+                                                    {item.preco.toLocaleString(
+                                                        'pt-BR',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'BRL',
+                                                        },
+                                                    )}
                                                 </CartItemPrice>
                                             </CartItemContent>
 
                                             <RemoveButton
                                                 type="button"
-                                                onClick={() => dispatch(remove(item.id))}
-                                                aria-label={`Remove ${item.nome} from cart`}
+                                                onClick={() =>
+                                                    dispatch(remove(item.id))
+                                                }
+                                                aria-label={`Remover ${item.nome} do carrinho`}
                                             >
-                                                <RemoveIcon src={lixeira} alt="" />
+                                                <RemoveIcon
+                                                    src={lixeira}
+                                                    alt=""
+                                                />
                                             </RemoveButton>
                                         </CartItem>
                                     ))}
                                 </CartList>
 
                                 <Total>
-                                    <TotalLabel>Order total</TotalLabel>
+                                    <TotalLabel>Total do pedido</TotalLabel>
                                     <TotalValue>{formattedTotal}</TotalValue>
                                 </Total>
 
@@ -279,17 +251,17 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                     type="button"
                                     onClick={() => setStep('delivery')}
                                 >
-                                    Continue to delivery
+                                    Continuar para entrega
                                 </CartButton>
                             </>
                         ) : (
                             <EmptyState>
                                 <EmptyIcon>🛒</EmptyIcon>
 
-                                <EmptyMessage>Your cart is empty</EmptyMessage>
+                                <EmptyMessage>Seu carrinho está vazio</EmptyMessage>
 
                                 <EmptyDescription>
-                                    Explore the menu and add something delicious to your order.
+                                    Explore o cardápio e escolha um prato para começar.
                                 </EmptyDescription>
                             </EmptyState>
                         )}
@@ -314,7 +286,19 @@ const Cart = ({ isOpen, onClose }: Props) => {
                 )}
 
                 {step === 'confirmation' && (
-                    <Confirmation orderId={orderId} onFinish={finishOrder} />
+                    <>
+                        <CartSubtitle>
+                            Pedido simulado · total confirmado:{' '}
+                            {Number(confirmedTotal).toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                            })}
+                        </CartSubtitle>
+                        <Confirmation
+                            orderId={orderId}
+                            onFinish={finishOrder}
+                        />
+                    </>
                 )}
             </CartContainer>
         </CartOverlay>

@@ -5,6 +5,7 @@ import {
     RestaurantName,
     RestaurantInfo
 } from './styles'
+import { categoryLabel } from '../../utils/categoryLabel'
 
 type Props = {
     category: string
@@ -17,7 +18,7 @@ const RestaurantHero = ({ category, name, image }: Props) => (
         <Overlay>
             <div className="container">
                 <RestaurantInfo>
-                    <Category>{category}</Category>
+                    <Category>{categoryLabel(category)}</Category>
 
                     <RestaurantName>{name}</RestaurantName>
                 </RestaurantInfo>

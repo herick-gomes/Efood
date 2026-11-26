@@ -17,10 +17,10 @@ const DishList = ({ dishes }: Props) => (
     <Section>
         <div className="container">
             <SectionHeader>
-                <SectionTitle>Explore the menu</SectionTitle>
+                <SectionTitle>Explore o cardápio</SectionTitle>
 
                 <SectionSubtitle>
-                    Discover our selection of dishes and choose your next favorite.
+                    Confira os pratos disponíveis e escolha o seu favorito.
                 </SectionSubtitle>
             </SectionHeader>
 

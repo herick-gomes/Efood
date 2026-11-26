@@ -20,7 +20,8 @@ export const ModalOverlay = styled.div`
     align-items: flex-start;
     overflow-y: auto;
 
-    padding: 20px 16px;
+    padding: 20px 16px max(20px, env(safe-area-inset-bottom, 0px));
+    overscroll-behavior: contain;
   }
 `
 

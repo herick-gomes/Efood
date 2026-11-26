@@ -36,7 +36,10 @@ export const CartContainer = styled.aside`
   }
 
   @media (max-width: 480px) {
-    padding: 20px 16px;
+    padding: 20px max(16px, env(safe-area-inset-right, 0px))
+      max(24px, env(safe-area-inset-bottom, 0px))
+      max(16px, env(safe-area-inset-left, 0px));
+    overscroll-behavior: contain;
   }
 `
 
@@ -151,12 +154,14 @@ export const CartItemImage = styled.img`
 
 export const CartItemContent = styled.div`
   min-width: 0;
+  flex: 1;
 
   padding: 6px 30px 6px 0;
 `
 
 export const CartItemName = styled.h3`
   margin-bottom: 10px;
+  overflow-wrap: anywhere;
 
   overflow: hidden;
 

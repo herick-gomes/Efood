@@ -7,7 +7,7 @@ import StatusState from '../../components/StatusState'
 
 import Restaurant from '../../models/Restaurant'
 
-import { translateRestaurants } from '../../utils/translateRestaurant'
+import { getRestaurants } from '../../services/efoodApi'
 
 const Home = () => {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([])
@@ -19,18 +19,8 @@ const Home = () => {
             setIsLoading(true)
             setError('')
 
-            const response = await fetch(
-                'https://api-ebac.vercel.app/api/efood/restaurantes',
-                { signal }
-            )
-
-            if (!response.ok) {
-                throw new Error('Unable to load restaurants')
-            }
-
-            const data: Restaurant[] = await response.json()
-
-            setRestaurants(translateRestaurants(data))
+            const data = await getRestaurants(signal)
+            setRestaurants(data)
         } catch (error) {
             if (error instanceof DOMException && error.name === 'AbortError') {
                 return
@@ -39,7 +29,7 @@ const Home = () => {
             console.error('Error loading restaurants:', error)
 
             setError(
-                'We could not load the restaurants right now. Please try again.'
+                'Não foi possível carregar os restaurantes. Tente novamente.'
             )
         } finally {
             if (!signal?.aborted) {
@@ -65,16 +55,16 @@ const Home = () => {
             {isLoading && (
                 <StatusState
                     loading
-                    title="Loading restaurants"
-                    description="We are preparing the best restaurant options for you."
+                    title="Carregando restaurantes"
+                    description="Estamos preparando as opções disponíveis."
                 />
             )}
 
             {!isLoading && error && (
                 <StatusState
-                    title="Something went wrong"
+                    title="Algo deu errado"
                     description={error}
-                    actionLabel="Try again"
+                    actionLabel="Tentar novamente"
                     onAction={() => loadRestaurants()}
                 />
             )}

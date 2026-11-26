@@ -21,17 +21,17 @@ const Header = () => (
             </Logo>
 
             <HeroContent>
-                <Eyebrow>DELIVERY • RESTAURANTS • EXPERIENCES</Eyebrow>
+                <Eyebrow>DELIVERY • RESTAURANTES • EXPERIÊNCIAS</Eyebrow>
 
                 <Title>
-                    Your next favorite meal
+                    Seu próximo prato favorito
                     <br />
-                    is just a few clicks away
+                    está a poucos cliques
                 </Title>
 
                 <Subtitle>
-                    Discover great restaurants, explore new flavors and order from the
-                    comfort of your home.
+                    Conheça restaurantes, descubra novos sabores e faça seu pedido
+                    sem sair de casa.
                 </Subtitle>
             </HeroContent>
         </div>

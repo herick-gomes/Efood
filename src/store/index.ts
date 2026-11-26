@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import Dish from '../models/Dish'
 import cartReducer from './reducers/cart'
 
-const CART_STORAGE_KEY = 'efood:cart'
+const CART_STORAGE_KEY = `efood:own-api:v1:${process.env.REACT_APP_EFOOD_API_URL || 'unconfigured'}:cart`
 
 const loadCartItems = (): Dish[] => {
     if (typeof window === 'undefined') {
