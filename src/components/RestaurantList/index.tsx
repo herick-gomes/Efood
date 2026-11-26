@@ -17,10 +17,10 @@ const RestaurantList = ({ restaurants }: Props) => (
     <Section>
         <div className="container">
             <SectionHeader>
-                <SectionTitle>Discover restaurants</SectionTitle>
+                <SectionTitle>Descubra restaurantes</SectionTitle>
 
                 <SectionSubtitle>
-                    Explore different cuisines and find your next favorite meal.
+                    Conheça novos sabores e escolha seu próximo prato favorito.
                 </SectionSubtitle>
             </SectionHeader>
 

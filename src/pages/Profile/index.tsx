@@ -21,7 +21,7 @@ const Profile = () => {
     const loadRestaurant = useCallback(
         async (signal?: AbortSignal) => {
             if (!id) {
-                setError('Restaurant not found.')
+                setError('Restaurante não encontrado.')
                 setIsLoading(false)
 
                 return
@@ -41,7 +41,7 @@ const Profile = () => {
                 console.error('Error loading restaurant:', error)
 
                 setError(
-                    'We could not load this restaurant right now. Please try again.'
+                    'Não foi possível carregar este restaurante. Tente novamente.'
                 )
             } finally {
                 if (!signal?.aborted) {
@@ -69,16 +69,16 @@ const Profile = () => {
             {isLoading && (
                 <StatusState
                     loading
-                    title="Loading restaurant"
-                    description="We are preparing the menu for you."
+                    title="Carregando restaurante"
+                    description="Estamos preparando o cardápio."
                 />
             )}
 
             {!isLoading && error && (
                 <StatusState
-                    title="Something went wrong"
+                    title="Algo deu errado"
                     description={error}
-                    actionLabel="Try again"
+                    actionLabel="Tentar novamente"
                     onAction={() => loadRestaurant()}
                 />
             )}

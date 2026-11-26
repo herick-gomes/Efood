@@ -10,6 +10,7 @@ import {
     Title,
     ViewButton
 } from './styles'
+import { categoryLabel } from '../../utils/categoryLabel'
 
 type Props = {
     id: number
@@ -32,28 +33,30 @@ const RestaurantCard = ({
 }: Props) => (
     <Card
         to={`/perfil/${id}`}
-        aria-label={`View ${title} restaurant`}
+        aria-label={`Ver restaurante ${title}`}
     >
         <RestaurantImage src={image} alt={title} />
 
         <Infos>
-            {featured && <Tag>Featured this week</Tag>}
-            <Tag>{category}</Tag>
+            {featured && <Tag>Destaque da semana</Tag>}
+            <Tag>{categoryLabel(category)}</Tag>
         </Infos>
 
         <CardContent>
             <CardHeader>
                 <Title>{title}</Title>
 
-                <Rating>
-                    <span>{rating}</span>
-                    <span aria-label="rating">★</span>
-                </Rating>
+                {rating > 0 && (
+                    <Rating aria-label={`Avaliação: ${rating} de 5 estrelas`}>
+                        <span>{rating}</span>
+                        <span aria-hidden="true">★</span>
+                    </Rating>
+                )}
             </CardHeader>
 
             <Description>{description}</Description>
 
-            <ViewButton>View restaurant</ViewButton>
+            <ViewButton>Ver restaurante</ViewButton>
         </CardContent>
     </Card>
 )

@@ -81,13 +81,31 @@ const placeholder =
     encodeURIComponent(
         '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="#f3e8db"/><circle cx="400" cy="225" r="130" fill="#fff8ed"/><circle cx="400" cy="225" r="100" fill="none" stroke="#d39a78" stroke-width="6"/><path d="M210 140v170M190 140v55h40v-55M590 140v170" stroke="#a96e50" stroke-width="10" fill="none" stroke-linecap="round"/></svg>',
     )
+// Fotos ilustrativas usadas somente para produtos do catálogo de demonstração.
+const demoPhotos: Record<string, string> = {
+    'Pizza de cogumelos':
+        'https://images.unsplash.com/photo-1614442316719-1e38c661c29c?auto=format&fit=crop&w=900&q=80',
+    'Prato executivo':
+        'https://images.unsplash.com/photo-1762631383556-7fa1365898b7?auto=format&fit=crop&w=900&q=80',
+    'Legumes assados':
+        'https://images.unsplash.com/photo-1606791422814-b32c705e3e2f?auto=format&fit=crop&w=900&q=80',
+}
+
+function photoForDish(dish: Dish): string {
+    if (!dish.foto) return demoPhotos[dish.nome] || placeholder
+    if (dish.nome === 'Legumes assados' && dish.foto.includes('photo-1512621776951-a57141f2eefd')) {
+        return demoPhotos[dish.nome]
+    }
+    return dish.foto
+}
+
 function withImages(restaurant: Restaurant): Restaurant {
     return {
         ...restaurant,
         capa: restaurant.capa || placeholder,
         cardapio: restaurant.cardapio.map((dish) => ({
             ...dish,
-            foto: dish.foto || placeholder,
+            foto: photoForDish(dish),
         })),
     }
 }

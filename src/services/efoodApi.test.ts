@@ -80,6 +80,26 @@ test('failed refresh clears authentication instead of sending an expired checkou
     expect(fetchMock).toHaveBeenCalledTimes(2)
 })
 
+test('demo products use representative food photos without changing their IDs', async () => {
+    fetchMock.mockImplementationOnce(() =>
+        ok([
+            {
+                id: 1,
+                titulo: 'Demo',
+                capa: '',
+                cardapio: [
+                    { ...dish, id: 10, nome: 'Prato executivo' },
+                    { ...dish, id: 11, nome: 'Pizza de cogumelos' },
+                    { ...dish, id: 12, nome: 'Legumes assados', foto: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd' },
+                ],
+            },
+        ]),
+    )
+    const data = await getRestaurants()
+    expect(data[0].cardapio.map((item) => item.id)).toEqual([10, 11, 12])
+    expect(data[0].cardapio.every((item) => item.foto.startsWith('https://images.unsplash.com/'))).toBe(true)
+})
+
 test('catalog provides a local placeholder for demo products without photographs', async () => {
     fetchMock.mockImplementationOnce(() =>
         ok([{ id: 1, titulo: 'Demo', capa: '', cardapio: [dish] }]),
