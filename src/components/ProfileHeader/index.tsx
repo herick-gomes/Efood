@@ -21,14 +21,14 @@ const ProfileHeader = () => {
 
     const cartLabel =
         items.length === 1
-            ? '1 item in your cart'
-            : `${items.length} items in your cart`
+            ? '1 item no carrinho'
+            : `${items.length} itens no carrinho`
 
     return (
         <>
             <HeaderBar>
                 <HeaderContent className="container">
-                    <Navigation to="/">← Restaurants</Navigation>
+                    <Navigation to="/">← Restaurantes</Navigation>
 
                     <Logo>
                         <Link to="/">

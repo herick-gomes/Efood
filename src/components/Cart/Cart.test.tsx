@@ -61,7 +61,7 @@ test('retry after a lost response reuses the same idempotency key', async () => 
         </Provider>,
     )
     fireEvent.click(
-        screen.getByRole('button', { name: 'Continue to delivery' }),
+        screen.getByRole('button', { name: 'Continuar para entrega' }),
     )
     fireEvent.click(
         screen.getByRole('button', { name: 'Continue test delivery' }),
@@ -73,7 +73,7 @@ test('retry after a lost response reuses the same idempotency key', async () => 
         ),
     )
     fireEvent.click(screen.getByRole('button', { name: 'Submit test order' }))
-    await screen.findByText('Demo order recorded!')
+    await screen.findByText('Pedido de demonstração confirmado!')
     expect(place.mock.calls[0][1]).toEqual(place.mock.calls[1][1])
     expect(place).toHaveBeenCalledTimes(2)
 })

@@ -13,17 +13,16 @@ import {
 const Footer = () => (
     <FooterContainer>
         <FooterContent className="container">
-            <Logo to="/" aria-label="Go to efood home">
+            <Logo to="/" aria-label="Voltar à página inicial do efood">
                 <img src={logo} alt="efood" />
             </Logo>
 
             <FooterDescription>
-                A modern food delivery experience built with React and TypeScript,
-                featuring restaurant discovery, persistent cart management and a
-                complete checkout flow.
+                Uma experiência de delivery com React e TypeScript, com cardápios,
+                carrinho e pedidos simulados integrados à nossa API Django.
             </FooterDescription>
 
-            <Stack aria-label="Technologies used">
+            <Stack aria-label="Tecnologias utilizadas">
                 <StackItem>React</StackItem>
                 <StackItem>TypeScript</StackItem>
                 <StackItem>Redux Toolkit</StackItem>
@@ -31,7 +30,7 @@ const Footer = () => (
             </Stack>
 
             <Copyright>
-                © {new Date().getFullYear()} efood. Portfolio project by Herick Gomes.
+                © {new Date().getFullYear()} efood. Projeto de portfólio de Herick Gomes.
             </Copyright>
         </FooterContent>
     </FooterContainer>

@@ -59,7 +59,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
         return accumulator + item.preco
     }, 0)
 
-    const formattedTotal = total.toLocaleString('en-US', {
+    const formattedTotal = total.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     })
@@ -127,7 +127,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             setCheckoutError(
                 error instanceof Error
                     ? error.message
-                    : 'Unable to place the order. Please try again.',
+                    : 'Não foi possível registrar o pedido. Tente novamente.',
             )
         } finally {
             setIsLoading(false)
@@ -149,18 +149,18 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
     const getStepTitle = () => {
         if (step === 'delivery') {
-            return 'Delivery'
+            return 'Entrega'
         }
 
         if (step === 'payment') {
-            return 'Payment'
+            return 'Pagamento'
         }
 
         if (step === 'confirmation') {
-            return 'Order confirmed'
+            return 'Pedido confirmado'
         }
 
-        return 'Your cart'
+        return 'Seu carrinho'
     }
 
     if (!isOpen) {
@@ -172,7 +172,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
             <CartContainer
                 role="dialog"
                 aria-modal="true"
-                aria-label="Shopping cart"
+                aria-label="Carrinho de compras"
                 onClick={(event) => event.stopPropagation()}
             >
                 <CartHeader>
@@ -182,8 +182,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
                         {step === 'cart' && items.length > 0 && (
                             <CartSubtitle>
                                 {items.length === 1
-                                    ? '1 item selected'
-                                    : `${items.length} items selected`}
+                                    ? '1 item selecionado'
+                                    : `${items.length} itens selecionados`}
                             </CartSubtitle>
                         )}
                     </div>
@@ -191,7 +191,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                     <CloseButton
                         type="button"
                         onClick={closeCart}
-                        aria-label="Close cart"
+                        aria-label="Fechar carrinho"
                         disabled={isLoading}
                     >
                         ×
@@ -217,7 +217,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
 
                                                 <CartItemPrice>
                                                     {item.preco.toLocaleString(
-                                                        'en-US',
+                                                        'pt-BR',
                                                         {
                                                             style: 'currency',
                                                             currency: 'BRL',
@@ -231,7 +231,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                                 onClick={() =>
                                                     dispatch(remove(item.id))
                                                 }
-                                                aria-label={`Remove ${item.nome} from cart`}
+                                                aria-label={`Remover ${item.nome} do carrinho`}
                                             >
                                                 <RemoveIcon
                                                     src={lixeira}
@@ -243,7 +243,7 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                 </CartList>
 
                                 <Total>
-                                    <TotalLabel>Order total</TotalLabel>
+                                    <TotalLabel>Total do pedido</TotalLabel>
                                     <TotalValue>{formattedTotal}</TotalValue>
                                 </Total>
 
@@ -251,18 +251,17 @@ const Cart = ({ isOpen, onClose }: Props) => {
                                     type="button"
                                     onClick={() => setStep('delivery')}
                                 >
-                                    Continue to delivery
+                                    Continuar para entrega
                                 </CartButton>
                             </>
                         ) : (
                             <EmptyState>
                                 <EmptyIcon>🛒</EmptyIcon>
 
-                                <EmptyMessage>Your cart is empty</EmptyMessage>
+                                <EmptyMessage>Seu carrinho está vazio</EmptyMessage>
 
                                 <EmptyDescription>
-                                    Explore the menu and add something delicious
-                                    to your order.
+                                    Explore o cardápio e escolha um prato para começar.
                                 </EmptyDescription>
                             </EmptyState>
                         )}
@@ -289,8 +288,8 @@ const Cart = ({ isOpen, onClose }: Props) => {
                 {step === 'confirmation' && (
                     <>
                         <CartSubtitle>
-                            Simulated order · confirmed total:{' '}
-                            {Number(confirmedTotal).toLocaleString('en-US', {
+                            Pedido simulado · total confirmado:{' '}
+                            {Number(confirmedTotal).toLocaleString('pt-BR', {
                                 style: 'currency',
                                 currency: 'BRL',
                             })}

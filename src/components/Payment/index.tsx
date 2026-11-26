@@ -45,7 +45,7 @@ const Payment = ({
             setSignedIn(true)
         } catch (error) {
             setAuthError(
-                error instanceof Error ? error.message : 'Unable to sign in.',
+                error instanceof Error ? error.message : 'Não foi possível entrar.',
             )
         } finally {
             setAuthBusy(false)
@@ -62,7 +62,7 @@ const Payment = ({
             await logout()
         } catch {
             setAuthError(
-                'Local session cleared. The refresh token could not be revoked remotely.',
+                'Sessão local encerrada, mas não foi possível revogar o token remoto.',
             )
         } finally {
             setSignedIn(false)
@@ -70,35 +70,35 @@ const Payment = ({
         }
     }
     return (
-        <section aria-label="Demo checkout">
-            <Title>Review your demo order</Title>
+        <section aria-label="Finalização de pedido simulado">
+            <Title>Revise seu pedido de demonstração</Title>
             <Subtitle>
-                This is a portfolio demonstration. No payment is collected and
-                no real delivery is scheduled. Do not enter card information.
+                Este é um projeto demonstrativo. Nenhum pagamento é cobrado e
+                nenhuma entrega real será realizada. Não informe dados de cartão.
             </Subtitle>
             <PriceBox>
-                <PriceLabel>Estimated total</PriceLabel>
+                <PriceLabel>Total estimado</PriceLabel>
                 <PriceValue>
-                    {total.toLocaleString('en-US', {
+                    {total.toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
                     })}
                 </PriceValue>
             </PriceBox>
             <Subtitle>
-                The server checks current prices and availability. Your
-                confirmed total appears after submission.
+                A API verifica preços e disponibilidade antes de registrar o pedido.
+                O total final aparece após a confirmação.
             </Subtitle>
             {(error || authError) && (
                 <CheckoutError role="alert">
-                    <strong>Unable to continue</strong>
+                    <strong>Não foi possível continuar</strong>
                     <span>{authError || error}</span>
                 </CheckoutError>
             )}
             {!signedIn ? (
                 <form onSubmit={signIn}>
                     <FieldGroup>
-                        <Label htmlFor="checkout-username">Username</Label>
+                        <Label htmlFor="checkout-username">Usuário</Label>
                         <input
                             id="checkout-username"
                             value={username}
@@ -112,7 +112,7 @@ const Payment = ({
                         />
                     </FieldGroup>
                     <FieldGroup>
-                        <Label htmlFor="checkout-password">Password</Label>
+                        <Label htmlFor="checkout-password">Senha</Label>
                         <input
                             id="checkout-password"
                             type="password"
@@ -132,10 +132,10 @@ const Payment = ({
                     <ButtonsContainer>
                         <Button type="submit" disabled={busy}>
                             {authBusy
-                                ? 'Please wait...'
+                                ? 'Aguarde...'
                                 : register
-                                  ? 'Create account'
-                                  : 'Sign in'}
+                                  ? 'Criar conta'
+                                  : 'Entrar'}
                         </Button>
                         <Button
                             type="button"
@@ -147,8 +147,8 @@ const Payment = ({
                             }}
                         >
                             {register
-                                ? 'Already have an account? Sign in'
-                                : 'New here? Create an account'}
+                                ? 'Já tem conta? Entrar'
+                                : 'Ainda não tem conta? Cadastre-se'}
                         </Button>
                     </ButtonsContainer>
                 </form>
@@ -156,8 +156,8 @@ const Payment = ({
                 <ButtonsContainer>
                     <Button type="button" onClick={submit} disabled={busy}>
                         {isLoading
-                            ? 'Placing order...'
-                            : 'Place simulated order'}
+                            ? 'Registrando pedido...'
+                            : 'Confirmar pedido simulado'}
                     </Button>
                     <Button
                         type="button"
@@ -165,7 +165,7 @@ const Payment = ({
                         onClick={signOut}
                         disabled={busy}
                     >
-                        Sign out
+                        Sair
                     </Button>
                 </ButtonsContainer>
             )}
@@ -176,7 +176,7 @@ const Payment = ({
                     onClick={onBack}
                     disabled={busy}
                 >
-                    Back to delivery
+                    Voltar à entrega
                 </Button>
             </ButtonsContainer>
         </section>

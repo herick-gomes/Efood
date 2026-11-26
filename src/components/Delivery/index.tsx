@@ -41,24 +41,24 @@ const Delivery = ({ onBack, onContinue }: Props) => {
 
     const validationSchema = Yup.object({
         receiver: Yup.string()
-            .min(3, 'Enter a valid name')
-            .required('This field is required'),
+            .min(3, 'Informe um nome válido')
+            .required('Campo obrigatório'),
 
         address: Yup.string()
-            .min(5, 'Enter a valid address')
-            .required('This field is required'),
+            .min(5, 'Informe um endereço válido')
+            .required('Campo obrigatório'),
 
         city: Yup.string()
-            .min(2, 'Enter a valid city')
-            .required('This field is required'),
+            .min(2, 'Informe uma cidade válida')
+            .required('Campo obrigatório'),
 
         zipCode: Yup.string()
-            .matches(/^\d{5}-\d{3}$/, 'Enter a valid postal code')
-            .required('This field is required'),
+            .matches(/^\d{5}-\d{3}$/, 'Informe um CEP válido')
+            .required('Campo obrigatório'),
 
         number: Yup.string()
-            .matches(/^\d+$/, 'Use numbers only')
-            .required('This field is required'),
+            .matches(/^\d+$/, 'Use apenas números')
+            .required('Campo obrigatório'),
 
         complement: Yup.string()
     })
@@ -71,19 +71,19 @@ const Delivery = ({ onBack, onContinue }: Props) => {
         >
             {({ errors, touched, values, handleChange, handleBlur }) => (
                 <Form>
-                    <Title>Delivery details</Title>
+                    <Title>Dados de entrega</Title>
 
                     <Subtitle>
-                        Tell us where you would like your order to be delivered.
+                        Informe um endereço fictício para simular a entrega.
                     </Subtitle>
 
                     <FieldGroup>
-                        <Label htmlFor="receiver">Recipient name</Label>
+                        <Label htmlFor="receiver">Nome de quem recebe</Label>
 
                         <Input
                             id="receiver"
                             name="receiver"
-                            placeholder="Full name"
+                            placeholder="Nome completo"
                             autoComplete="name"
                             value={values.receiver}
                             onChange={handleChange}
@@ -97,12 +97,12 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </FieldGroup>
 
                     <FieldGroup>
-                        <Label htmlFor="address">Address</Label>
+                        <Label htmlFor="address">Endereço</Label>
 
                         <Input
                             id="address"
                             name="address"
-                            placeholder="Street and address"
+                            placeholder="Rua ou avenida"
                             autoComplete="street-address"
                             value={values.address}
                             onChange={handleChange}
@@ -116,12 +116,12 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </FieldGroup>
 
                     <FieldGroup>
-                        <Label htmlFor="city">City</Label>
+                        <Label htmlFor="city">Cidade</Label>
 
                         <Input
                             id="city"
                             name="city"
-                            placeholder="City"
+                            placeholder="Cidade"
                             autoComplete="address-level2"
                             value={values.city}
                             onChange={handleChange}
@@ -136,7 +136,7 @@ const Delivery = ({ onBack, onContinue }: Props) => {
 
                     <Row>
                         <FieldGroup>
-                            <Label htmlFor="zipCode">Postal code</Label>
+                            <Label htmlFor="zipCode">CEP</Label>
 
                             <InputMask
                                 id="zipCode"
@@ -158,7 +158,7 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                         </FieldGroup>
 
                         <FieldGroup>
-                            <Label htmlFor="number">Number</Label>
+                            <Label htmlFor="number">Número</Label>
 
                             <Input
                                 id="number"
@@ -178,12 +178,12 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </Row>
 
                     <FieldGroup>
-                        <Label htmlFor="complement">Additional details</Label>
+                        <Label htmlFor="complement">Complemento</Label>
 
                         <Input
                             id="complement"
                             name="complement"
-                            placeholder="Apartment, suite, landmark... (optional)"
+                            placeholder="Apartamento, bloco, referência... (opcional)"
                             autoComplete="address-line2"
                             value={values.complement}
                             onChange={handleChange}
@@ -192,10 +192,10 @@ const Delivery = ({ onBack, onContinue }: Props) => {
                     </FieldGroup>
 
                     <ButtonsContainer>
-                        <Button type="submit">Continue to payment</Button>
+                        <Button type="submit">Continuar</Button>
 
                         <Button type="button" $secondary onClick={onBack}>
-                            Back to cart
+                            Voltar ao carrinho
                         </Button>
                     </ButtonsContainer>
                 </Form>

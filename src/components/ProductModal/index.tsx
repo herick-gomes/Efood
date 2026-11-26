@@ -65,7 +65,7 @@ const ProductModal = ({
         return null
     }
 
-    const formattedPrice = price.toLocaleString('en-US', {
+    const formattedPrice = price.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
     })
@@ -96,7 +96,7 @@ const ProductModal = ({
                 <CloseButton
                     type="button"
                     onClick={onClose}
-                    aria-label="Close product details"
+                    aria-label="Fechar detalhes do produto"
                 >
                     ×
                 </CloseButton>
@@ -113,7 +113,7 @@ const ProductModal = ({
                     <Price>{formattedPrice}</Price>
 
                     <PurchaseButton type="button" onClick={addToCart}>
-                        Add to cart
+                        Adicionar ao carrinho
                     </PurchaseButton>
                 </ModalContent>
             </ModalContainer>

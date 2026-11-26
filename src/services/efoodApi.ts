@@ -28,12 +28,12 @@ function describe(value: unknown): string {
     if (Array.isArray(value)) return value.map(describe).join(' ')
     if (value && typeof value === 'object')
         return Object.values(value).map(describe).join(' ')
-    return 'Unable to complete the request.'
+    return 'Não foi possível concluir a solicitação.'
 }
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     if (!API_URL)
         throw new Error(
-            'The Efood API URL is not configured. Set REACT_APP_EFOOD_API_URL and restart the app.',
+            'A URL da API não está configurada. Defina REACT_APP_EFOOD_API_URL e reinicie o aplicativo.',
         )
     const response = await fetch(`${API_URL}${path}`, options)
     const data = await response.json().catch(() => ({}))
@@ -42,7 +42,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
             describe(
                 data.error?.details ||
                     data.detail ||
-                    'Unable to complete the request.',
+                    'Não foi possível concluir a solicitação.',
             ),
         )
     return data as T
@@ -146,7 +146,7 @@ export function orderPayload(
     }
 }
 async function refreshSession(): Promise<void> {
-    if (!tokens) throw new Error('Please sign in to place your order.')
+    if (!tokens) throw new Error('Entre na sua conta para concluir o pedido.')
     try {
         tokens = await request<Tokens>('/auth/refresh/', {
             method: 'POST',
@@ -162,7 +162,7 @@ export async function placeOrder(
     payload: OrderPayload,
     key: string,
 ): Promise<OrderResponse> {
-    if (!tokens) throw new Error('Please sign in to place your order.')
+    if (!tokens) throw new Error('Entre na sua conta para concluir o pedido.')
     // Rotate before checkout. Concurrent callers share one rotation request.
     if (!refreshing)
         refreshing = refreshSession().finally(() => {

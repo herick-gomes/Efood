@@ -26,17 +26,17 @@ test('requires sign-in for simulated checkout and does not collect cards', async
         />,
     )
     expect(screen.queryByLabelText(/card|cvv/i)).toBeNull()
-    fireEvent.change(screen.getByLabelText('Username'), {
+    fireEvent.change(screen.getByLabelText('Usuário'), {
         target: { value: 'demo' },
     })
-    fireEvent.change(screen.getByLabelText('Password'), {
+    fireEvent.change(screen.getByLabelText('Senha'), {
         target: { value: 'test-password' },
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }))
-    await screen.findByRole('button', { name: 'Place simulated order' })
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }))
+    await screen.findByRole('button', { name: 'Confirmar pedido simulado' })
     expect(auth).toHaveBeenCalledWith('demo', 'test-password', false)
     fireEvent.click(
-        screen.getByRole('button', { name: 'Place simulated order' }),
+        screen.getByRole('button', { name: 'Confirmar pedido simulado' }),
     )
     await waitFor(() => expect(submit).toHaveBeenCalledTimes(1))
 })
@@ -52,18 +52,18 @@ test('shows login errors and keeps checkout unavailable', async () => {
             onSubmitPayment={jest.fn()}
         />,
     )
-    fireEvent.change(screen.getByLabelText('Username'), {
+    fireEvent.change(screen.getByLabelText('Usuário'), {
         target: { value: 'demo' },
     })
-    fireEvent.change(screen.getByLabelText('Password'), {
+    fireEvent.change(screen.getByLabelText('Senha'), {
         target: { value: 'wrong' },
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     await screen.findByRole('alert')
     expect(screen.getByRole('alert').textContent).toContain(
         'Invalid credentials',
     )
     expect(
-        screen.queryByRole('button', { name: 'Place simulated order' }),
+        screen.queryByRole('button', { name: 'Confirmar pedido simulado' }),
     ).toBeNull()
 })
